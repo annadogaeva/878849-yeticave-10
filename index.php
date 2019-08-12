@@ -2,6 +2,10 @@
 $is_auth = rand(0, 1);
 
 $user_name = 'Анна Догаева'; // укажите здесь ваше имя
+
+$categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];
+
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -55,9 +59,11 @@ $user_name = 'Анна Догаева'; // укажите здесь ваше и
         <p class="promo__text">На нашем интернет-аукционе ты найдёшь самое эксклюзивное сноубордическое и горнолыжное снаряжение.</p>
         <ul class="promo__list">
             <!--заполните этот список из массива категорий-->
+            <?php foreach ($categories as $value): ?>
             <li class="promo__item promo__item--boards">
-                <a class="promo__link" href="pages/all-lots.html">Имя категории</a>
+                <a class="promo__link" href="pages/all-lots.html"><?=$value?></a>
             </li>
+        <?php endforeach?>
         </ul>
     </section>
     <section class="lots">
@@ -66,9 +72,10 @@ $user_name = 'Анна Догаева'; // укажите здесь ваше и
         </div>
         <ul class="lots__list">
             <!--заполните этот список из массива с товарами-->
+            <?php foreach ($lots as $key => $value): ?>
             <li class="lots__item lot">
                 <div class="lot__image">
-                    <img src="" width="350" height="260" alt="">
+                    <img src="<?=$value?>" width="350" height="260" alt="">
                 </div>
                 <div class="lot__info">
                     <span class="lot__category">Название категории</span>
@@ -84,6 +91,7 @@ $user_name = 'Анна Догаева'; // укажите здесь ваше и
                     </div>
                 </div>
             </li>
+            <?php endforeach ?>
         </ul>
     </section>
 </main>
@@ -93,9 +101,11 @@ $user_name = 'Анна Догаева'; // укажите здесь ваше и
     <nav class="nav">
         <ul class="nav__list container">
             <!--заполните этот список из массива категорий-->
+            <?php foreach ($categories as $value): ?>
             <li class="nav__item">
-                <a href="pages/all-lots.html">Название категории</a>
+                <a href="pages/all-lots.html"><?=$value?></a>
             </li>
+            <?php endforeach ?>
         </ul>
     </nav>
     <div class="main-footer__bottom container">
