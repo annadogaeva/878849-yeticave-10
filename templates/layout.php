@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title><?=$title; ?></title>
+    <title><?= $title; ?></title>
     <link href="../css/normalize.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
 </head>
@@ -23,9 +23,9 @@
             <nav class="user-menu">
 
                 <!-- здесь должен быть PHP код для показа меню и данных пользователя -->
-                <?php if($is_auth == 1):?>
+                <?php if ($is_auth == 1):?>
                     <div class="user-menu__logged">
-                        <p><?=$user_name ?></p>
+                        <p><?= $user_name ?></p>
                         <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
                         <a class="user-menu__logout" href="#">Выход</a>
                     </div>
@@ -44,7 +44,7 @@
     </header>
 
     <main class="container">
-        <?=$content; ?>
+        <?= $content; ?>
     </main>
 </div>
 
@@ -54,7 +54,7 @@
             <!--заполните этот список из массива категорий-->
             <?php foreach ($categories as $category): ?>
                 <li class="nav__item">
-                    <a href="pages/all-lots.html"><?=htmlspecialchars($category['name'])?></a>
+                    <a href="pages/all-lots.html"><?=htmlspecialchars($category)?></a>
                 </li>
             <?php endforeach ?>
         </ul>
