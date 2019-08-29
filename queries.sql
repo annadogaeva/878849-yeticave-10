@@ -18,19 +18,19 @@ INSERT INTO bids SET sum = 11500, author_id = 1, lot_id = 4;
 INSERT INTO users SET email = 'actorwriter400@yandex.ru', name = 'Худяков Дмитрий', password = 'coolerthanyou', contact_info = 'Санкт-Петербург, пр. Новоизмайловский, 16, корпус 6';
 INSERT INTO users SET email = 'ne_dasha005@mail.ru', name = 'Суворова Маша', password = '1468ah', contact_info = 'г.Липецк, ул.Терешковой, 3/4, кв.56';
 
-//получить все категории;
+--получить все категории;
 SELECT NAME FROM categories;
 
-//получить самые новые, открытые лоты. Каждый лот должен включать название, стартовую цену, ссылку на изображение, цену, название категории;
+--получить самые новые, открытые лоты. Каждый лот должен включать название, стартовую цену, ссылку на изображение, цену, название категории;
 SELECT l.NAME, l.start_price, l.image, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE end_date > NOW() ORDER BY start_date DESC;
 
-//показать лот по его id. Получите также название категории, к которой принадлежит лот;
+--показать лот по его id. Получите также название категории, к которой принадлежит лот;
 SELECT l.NAME, l.id, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE l.id = 4;
 
-//обновить название лота по его идентификатору;
+--обновить название лота по его идентификатору;
 UPDATE lots SET NAME = 'Новое название' WHERE id = 2;
 
-//получить список ставок для лота по его идентификатору с сортировкой по дате.
+--получить список ставок для лота по его идентификатору с сортировкой по дате
 SELECT b.sum FROM bids b JOIN lots l ON b.lot_id=l.id WHERE l.id = 4 ORDER BY b.DATE DESC;
 
 
