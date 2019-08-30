@@ -20,7 +20,7 @@ $lots = [
         category => $categories['boards'],
         price => 10999,
         url =>  'img/lot-1.jpg',
-        time => '2019-10-11'
+        time => '2019-08-23'
     ],[
         name => 'DC Ply Mens 2016/2017 Snowboard',
         category => $categories['boards'],
@@ -32,7 +32,7 @@ $lots = [
         category => $categories['attachment'],
         price => 8000,
         url =>  'img/lot-3.jpg',
-        time => '2019-08-21'
+        time => '2019-08-24'
     ],[
         name => 'Ботинки для сноуборда DC Mutiny Charocal',
         category => $categories['boots'],
@@ -50,11 +50,16 @@ $lots = [
         category => $categories['other'],
         price => 5400,
         url =>  'img/lot-6.jpg',
-        time => '2019-08-20'
+        time => '2019-08-30'
     ]
 ];
 
-
+/**
+ * Форматирует цену с разделителями групп разрядов и добавляет знак валюты ₽
+ *
+ * @param number
+ * @return number
+ */
 function format_price($num) {
     ceil($num);
     $num = number_format($num, 0, '.', ' ');
@@ -63,20 +68,25 @@ function format_price($num) {
     return $num;
 };
 
-function calculate_time($time) {
-    $current_time = time();
-    $future_time = htmlspecialchars(strtotime($time));
+/**
+ * Считает остаток времени в формате ЧЧ:ММ до будущей даты
+ *
+ * @param string
+ * @return array
+ */
+function calculate_remaining_time($time) {
+    $current_time = date_create('now');
+    $future_time = date_create($time);
 
-    if($future_time > $current_time) {
-        $diff_hours = ($future_time - $current_time)/3600;
-        $result_hours = str_pad(floor($diff_hours), 2, '0', STR_PAD_LEFT);
-        $result_minutes = str_pad(floor(($diff_hours-$result_hours)*60), 2, '0', STR_PAD_LEFT);
-    }
+    $interval = date_diff($current_time, $future_time);
 
-    $result = [$result_hours, $result_minutes];
+    $days = date_interval_format($interval, '%a');
+    $hours = date_interval_format($interval, '%H');
+    $minutes = date_interval_format($interval, '%I');
 
+    $result = [$days*24 + $hours, $minutes];
     return $result;
-};
+}
 
 
 $page_content = include_template('main.php', [
