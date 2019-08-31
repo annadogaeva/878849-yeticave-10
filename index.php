@@ -1,64 +1,17 @@
 <?php
 require_once('helpers.php');
+require_once('dbinit.php');
 
 $is_auth = rand(0, 1);
 
 $user_name = 'Анна Догаева'; // укажите здесь ваше имя
 
-$categories = [
-    'boards' => 'Доски и лыжи',
-    'attachment' => 'Крепления',
-    'boots' => 'Ботинки',
-    'clothing' => 'Одежда',
-    'tools' => 'Инструменты',
-    'other' => 'Разное'
-];
-
-//$lots = [
-//    [
-//        name => '2014 Rossignol District Snowboard',
-//        category => $categories['boards'],
-//        price => 10999,
-//        url =>  'img/lot-1.jpg',
-//        time => '2019-08-23'
-//    ],[
-//        name => 'DC Ply Mens 2016/2017 Snowboard',
-//        category => $categories['boards'],
-//        price => 159999,
-//        url =>  'img/lot-2.jpg',
-//        time => '2019-09-01'
-//    ],[
-//        name => 'Крепления Union Contact Pro 2015 года размер L/XL',
-//        category => $categories['attachment'],
-//        price => 8000,
-//        url =>  'img/lot-3.jpg',
-//        time => '2019-08-24'
-//    ],[
-//        name => 'Ботинки для сноуборда DC Mutiny Charocal',
-//        category => $categories['boots'],
-//        price => 10999,
-//        url =>  'img/lot-4.jpg',
-//        time => '2019-09-15'
-//    ],[
-//        name => 'Куртка для сноуборда DC Mutiny Charocal',
-//        category => $categories['clothing'],
-//        price => 7500,
-//        url =>  'img/lot-5.jpg',
-//        time => '2019-10-25'
-//    ],[
-//        name => 'Маска Oakley Canopy',
-//        category => $categories['other'],
-//        price => 5400,
-//        url =>  'img/lot-6.jpg',
-//        time => '2019-08-30'
-//    ]
-//];
 
 /**
  * Форматирует цену с разделителями групп разрядов и добавляет знак валюты ₽
  *
- * @param number
- * @return number
+ * @param number $num - изначальная цена
+ * @return string
  */
 function format_price($num) {
     ceil($num);
@@ -69,9 +22,9 @@ function format_price($num) {
 };
 
 /**
- * Считает остаток времени в формате ЧЧ:ММ до будущей даты
+ * Считает остаток времени от текущей до будущей даты
  *
- * @param string
+ * @param string $time - изначальное время
  * @return array
  */
 function calculate_remaining_time($time) {
@@ -88,7 +41,6 @@ function calculate_remaining_time($time) {
     return $result;
 }
 
-
 $page_content = include_template('main.php', [
     'categories' => $categories,
     'lots' => $lots
@@ -104,15 +56,6 @@ $layout_content = include_template('layout.php', [
 
 print($layout_content);
 
-//Работа с MYSQL
-$con = mysqli_connect('localhost', 'root', '', 'yeticave');
-if($con == false) {
-    print("Ошибка:" . mysqli_connect_error());
-}
-mysqli_set_charset($con, 'utf8');
-$sql = 'SELECT l.NAME, l.start_price, l.image, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE end_date > NOW() ORDER BY start_date DESC';
-$result = mysqli_query($con, $sql);
-$lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
-var_dump($lots[0]);
+
 ?>
 
