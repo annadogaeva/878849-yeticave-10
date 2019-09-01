@@ -78,3 +78,17 @@ function get_lot_info($con) {
         return $lot_info;
     }
 };
+
+/**
+ * Возвращает id категории по ее имени
+ *
+ * @param mysqli $con База данных
+ * @param string $name Имя категории
+ * @return array
+ */
+function get_categoryid($con, $name) {
+    $sql = 'SELECT id FROM categories WHERE NAME = "' . $name . '"';
+    $result = mysqli_query($con, $sql);
+    $id = mysqli_fetch_assoc($result);
+    return $id['id'];
+};
