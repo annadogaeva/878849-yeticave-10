@@ -24,13 +24,18 @@ function calculate_remaining_time($time) {
     $current_time = date_create('now');
     $future_time = date_create($time);
 
-    $interval = date_diff($current_time, $future_time);
+    if ($current_time < $future_time) {
+        $interval = date_diff($current_time, $future_time);
 
-    $days = date_interval_format($interval, '%a');
-    $hours = date_interval_format($interval, '%H');
-    $minutes = date_interval_format($interval, '%I');
+        $days = date_interval_format($interval, '%a');
+        $hours = date_interval_format($interval, '%h');
+        $total_hours = sprintf('%02d', $days*24 + $hours);
+        $minutes = date_interval_format($interval, '%I');
+        $result = [$total_hours, $minutes];
+    } else {
+        $result = ['00', '00'];
+    }
 
-    $result = [$days*24 + $hours, $minutes];
     return $result;
 };
 
