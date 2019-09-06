@@ -15,9 +15,10 @@ function format_price($num, $symbol = ' ₽') {
 };
 
 /**
- * Считает остаток времени от текущей до будущей даты
+ * Считает остаток времени в часах и минутах от текущей до будущей даты.
+ * Возвращает массив, где 1 элемент - часы, 2 - минуты.
  *
- * @param string $time - изначальное время
+ * @param string $time - будущая дата
  * @return array
  */
 function calculate_remaining_time($time) {
@@ -61,7 +62,7 @@ function get_active_lots($con) {
  * @return array
  */
 function get_categories($con) {
-    $sql = 'SELECT symbol_code, name FROM categories';
+    $sql = 'SELECT id, symbol_code, name FROM categories';
     $result = mysqli_query($con, $sql);
     $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
@@ -85,15 +86,51 @@ function get_lot_info($con) {
 };
 
 /**
- * Возвращает id категории по ее имени
+ * Производит валидацию категории при отправке формы
  *
- * @param mysqli $con База данных
- * @param string $name Имя категории
- * @return array
+ * @param string $name Полученное имя категории
+ * @param string $allowed_list Разрешенный список категорий
+ * @return string
  */
-function get_categoryid($con, $name) {
-    $sql = 'SELECT id FROM categories WHERE NAME = "' . $name . '"';
-    $result = mysqli_query($con, $sql);
-    $id = mysqli_fetch_assoc($result);
-    return $id['id'];
+function validate_category($name, $allowed_list) {
+    $id = $_POST[$name];
+    if (!in_array($id, $allowed_list)) {
+        return 'Указана несуществующая категория';
+    }
+    return null;
 };
+
+function validate_price($name) {
+    $price = $_POST[$name];
+    if ($price <= 0 || !is_numeric($price)) {
+        return "Содержимое поля «начальная цена» должно быть числом больше ноля.";
+    }
+
+    return null;
+}
+
+function validate_bid_step($name) {
+    $bid = $_POST[$name];
+    if ($bid <= 0 || filter_var($name, FILTER_VALIDATE_INT) === true)
+    {
+        return "Содержимое поля «шаг ставки» должно быть целым числом больше ноля";
+    }
+
+    return null;
+}
+
+function validate_end_date($name) {
+    $date = $_POST[$name];
+
+    if(!date_create($date)) {
+        return "Содержимое поля «дата завершения» должно быть датой в формате «ГГГГ-ММ-ДД»";
+    } elseif (date_create($date) <= date_create('now')) {
+        return "Указанная дата должна быть больше текущей хотя бы на один день";
+    }
+
+    return null;
+}
+
+function getPostVal($name) {
+    return $_POST[$name] ?? "";
+}

@@ -13,56 +13,76 @@ $page_content = include_template('add-lot.php', [
 ]);
 
 
+$categories = get_categories($con);
+$cats_ids = array_column($categories, 'id');
+
 //Если форма отправлена, то...
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lot_post = $_POST;
 
     //ВАЛИДАЦИЯ ФОРМЫ
-    $required = ['category_id', 'image', 'start_price', 'bid_step', 'end_date'];
+    $required = ['name', 'category_id', 'description', 'start_price', 'bid_step', 'end_date'];
     $errors = [];
 
-    $cats_ids = array_column(get_categories($con), 'id');
 
-//    $rules = [
-//        'category_id' => function() use ($cats_ids) {
-//            return validateCategory('category_id', $cats_ids);
-//        },
-//        'start_ptice' => function() {
-//            return
-//        },
-//        'bid_step' => function() {
-//            return
-//        },
-//        'end_date' => function() {
-//            return
-//        },
-//        'image' => function() {
-//            return
-//        }
-//    ];
+    $rules = [
+        'category_id' => function() use ($cats_ids) {
+            return validate_category('category_id', $cats_ids);
+        },
+        'start_price' => function() {
+            return validate_price('start_price');
+        },
+        'bid_step' => function() {
+            return validate_bid_step('bid_step');
+        },
+        'end_date' => function() {
+            return validate_end_date('end_date');
+        }
+    ];
 
-    //ОТПРАВКА ФОРМЫ
-    //работа с файлом
-    $filename = uniqid() . '.jpg';
-    move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/' . $filename);
-    $lot_post['image'] = 'uploads/' . $filename;
+    foreach ($_POST as $key => $value) {
+        if (isset($rules[$key])) {
+            $rule = $rules[$key];
+            $errors[$key] = $rule();
+        }
+    }
 
-    //получаем id категории
-    $category_id = get_categoryid($con, $lot_post['category_id']);
-    $lot_post['category_id'] = $category_id;
+    $errors = array_filter($errors);
 
-    //подготавливаем выражение
-    $sql = 'INSERT INTO lots (start_date, NAME, category_id, description, start_price, bid_step, end_date, author_id, image) VALUES 
+    foreach ($required as $key) {
+        if (empty($_POST[$key])) {
+            $errors[$key] = 'Заполните это поле';
+        }
+    }
+
+    if (count($errors)) {
+        $page_content = include_template('add-lot.php',
+            [
+            'lot' => $lot_post,
+            'errors' => $errors,
+            'categories' => $categories
+            ]);
+    } else {
+        //работа с файлом
+        $filename = uniqid() . '.jpg';
+        move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/' . $filename);
+        $lot_post['image'] = 'uploads/' . $filename;
+
+        //подготавливаем выражение
+        $sql = 'INSERT INTO lots (start_date, NAME, category_id, description, start_price, bid_step, end_date, author_id, image) VALUES 
 (NOW(), ?, ?, ?, ?, ?, ?, 1, ?);';
-    $stmt = db_get_prepare_stmt($con, $sql, $lot_post);
-    $res = mysqli_stmt_execute($stmt);
-    if ($res) {
-        $lot_id = mysqli_insert_id($con);
-        header("Location: lot.php?lot=" . $lot_id);
+        $stmt = db_get_prepare_stmt($con, $sql, $lot_post);
+        $res = mysqli_stmt_execute($stmt);
+        if ($res) {
+            $lot_id = mysqli_insert_id($con);
+            header("Location: lot.php?lot=" . $lot_id);
+        }
     }
-    else {
-        $page_content = include_template('error.php', ['error' => mysqli_error($con)]);
-    }
+
+
+//    else {
+//        $page_content = include_template('error.php', ['error' => mysqli_error($con)]);
+//    }
 }
 
 
