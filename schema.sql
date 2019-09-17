@@ -18,9 +18,9 @@ CREATE TABLE lots
     name CHAR(64) NOT NULL,
     description CHAR(255) NOT NULL,
     image CHAR(255) NOT NULL,
-    start_price INT(12)  NOT NULL,
+    start_price INT(255)  NOT NULL,
     end_date TIMESTAMP NOT NULL,
-    bid_step INT(12)  NOT NULL,
+    bid_step INT(255)  NOT NULL,
     author_id INT(12)  NOT NULL,
     winner_id INT(12),
     category_id INT(12)  NOT NULL

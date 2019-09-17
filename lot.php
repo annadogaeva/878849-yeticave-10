@@ -7,12 +7,14 @@ $is_auth = rand(0, 1);
 
 $user_name = 'Анна Догаева'; // укажите здесь ваше имя
 
-if (get_lot_info($con)) {
+$lot_info = get_lot_info($con);
+
+if ($lot_info) {
     $page_content = include_template('lotpage.php', [
         'categories' => get_categories($con),
-        'lot_info' => get_lot_info($con)
+        'lot_info' => $lot_info
     ]);
-    $title = get_lot_info($con)['NAME'];
+    $title = $lot_info['NAME'];
 } else {
     http_response_code(404);
 }
