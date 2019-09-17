@@ -8,7 +8,6 @@
     </ul>
 </nav>
 <?php $classname = isset($errors) ? "form--invalid" : ""; ?>
-<?php var_dump($errors);?>
 <form class="form form--add-lot container <?= $classname; ?>" action="add.php" method="post" enctype="multipart/form-data"> <!-- form--invalid -->
     <h2>Добавление лота</h2>
     <div class="form__container-two">
@@ -36,7 +35,8 @@
         <textarea id="message" name="description" placeholder="Напишите описание лота"><?= getPostVal('description') ?></textarea>
         <span class="form__error"><?= $errors['description'] ?></span>
     </div>
-    <div class="form__item form__item--file">
+    <?php $classname = isset($errors['file']) ? "form__item--invalid" : ""; ?>
+    <div class="form__item form__item--file <?= $classname; ?>">
         <label>Изображение <sup>*</sup></label>
         <div class="form__input-file">
             <input class="visually-hidden" type="file" id="lot-img" value="" name="image" value="<?= getPostVal('image') ?>">
@@ -44,6 +44,7 @@
                 Добавить
             </label>
         </div>
+        <span class="form__error"><?= $errors['file'] ?></span>
     </div>
     <div class="form__container-three">
         <?php $classname = isset($errors['start_price']) ? "form__item--invalid" : ""; ?>

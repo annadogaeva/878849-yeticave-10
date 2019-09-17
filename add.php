@@ -55,6 +55,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+
+    //работа с файлом
+    if (!empty($_FILES['image']['name'])) {
+        $tmp_name = $_FILES['image']['tmp_name'];
+        $file_ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+        $filename = uniqid() . '.' . $file_ext;
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $file_type = finfo_file($finfo, $tmp_name);
+
+
+        if (($file_type !== 'image/jpeg') && ($file_type !== 'image/png')) {
+            $errors['file'] = 'Загрузите картинку в формате JPG или PNG';
+
+        } else {
+            move_uploaded_file($tmp_name, 'uploads/' . $filename);
+            $lot_post['image'] = 'uploads/' . $filename;
+        }
+
+    } else {
+        $errors['file'] = 'Вы не загрузили файл';
+    }
+
     if (count($errors)) {
         $page_content = include_template('add-lot.php',
             [
@@ -63,13 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'categories' => $categories
             ]);
     } else {
-        //работа с файлом
-        $filename = uniqid() . '.jpg';
-        move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/' . $filename);
-        $lot_post['image'] = 'uploads/' . $filename;
 
         //подготавливаем выражение
-        $sql = 'INSERT INTO lots (start_date, NAME, category_id, description, start_price, bid_step, end_date, author_id, image) VALUES 
+        $sql = 'INSERT INTO lots (start_date, NAME, category_id, description, start_price, bid_step, end_date, author_id, image) VALUES
 (NOW(), ?, ?, ?, ?, ?, ?, 1, ?);';
         $stmt = db_get_prepare_stmt($con, $sql, $lot_post);
         $res = mysqli_stmt_execute($stmt);
@@ -78,11 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: lot.php?lot=" . $lot_id);
         }
     }
-
-
-//    else {
-//        $page_content = include_template('error.php', ['error' => mysqli_error($con)]);
-//    }
 }
 
 
