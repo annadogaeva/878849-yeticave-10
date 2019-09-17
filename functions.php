@@ -76,8 +76,9 @@ function get_categories($con) {
  * @return array
  */
 function get_lot_info($con) {
-    if (isset($_GET['lot'])) {
-        $lot_id = $_GET['lot'];
+    $get_lot = $_GET['lot'];
+    if (isset($get_lot)) {
+        $lot_id = mysqli_real_escape_string($con, $_GET['lot']);
         $sql = 'SELECT l.NAME, l.start_price, l.image, l.end_date, l.bid_step, l.description, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE l.id = ' . $lot_id . '';
         $result = mysqli_query($con, $sql);
         $lot_info = mysqli_fetch_assoc($result);
