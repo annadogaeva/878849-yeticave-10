@@ -3,22 +3,29 @@ require_once('helpers.php');
 require_once('dbinit.php');
 require_once('functions.php');
 
-$is_auth = rand(0, 1);
-
-$user_name = 'Анна Догаева'; // укажите здесь ваше имя
-
-$page_content = include_template('add-lot.php', [
-    'categories' => get_categories($con),
-    'lots' => get_active_lots($con)
-]);
-
 
 $categories = get_categories($con);
 $cats_ids = array_column($categories, 'id');
 
+if($is_auth) {
+    $page_content = include_template('add-lot.php', [
+        'categories' => $categories,
+        'lots' => get_active_lots($con)
+    ]);
+} else {
+    http_response_code(403);
+}
+
+if (http_response_code()== 403) {
+    $page_content = include_template('error.php', [
+        'categories' => $categories
+    ]);
+}
+
 //Если форма отправлена, то...
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lot_post = $_POST;
+    $lot_post['author_id'] = $_SESSION['user']['id'];
 
     //ВАЛИДАЦИЯ ФОРМЫ
     $required = ['name', 'category_id', 'description', 'start_price', 'bid_step', 'end_date'];
@@ -86,10 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'categories' => $categories
             ]);
     } else {
-
         //подготавливаем выражение
         $sql = 'INSERT INTO lots (start_date, NAME, category_id, description, start_price, bid_step, end_date, author_id, image) VALUES
-(NOW(), ?, ?, ?, ?, ?, ?, 1, ?);';
+(NOW(), ?, ?, ?, ?, ?, ?, ?, ?);';
         $stmt = db_get_prepare_stmt($con, $sql, $lot_post);
         $res = mysqli_stmt_execute($stmt);
         if ($res) {
@@ -103,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'title' => 'Добавление лота',
-    'categories' => get_categories($con),
+    'categories' => $categories,
     'user_name' => $user_name,
     'is_auth' => $is_auth
 ]);

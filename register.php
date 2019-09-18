@@ -3,21 +3,28 @@ require_once('helpers.php');
 require_once('dbinit.php');
 require_once('functions.php');
 
-$is_auth = rand(0, 1);
-
-$user_name = 'Анна Догаева'; // укажите здесь ваше имя
-
-
-$page_content = include_template('registration.php', [
-    'categories' => get_categories($con)
-]);
-
+$categories = get_categories($con);
 $emails = get_emails($con);
+
+if(!$is_auth) {
+    $page_content = include_template('registration.php', [
+        'categories' => $categories
+    ]);
+} else {
+    http_response_code(403);
+}
+
+if(http_response_code()== 403) {
+    $page_content = include_template('error.php', [
+        'categories' => $categories
+    ]);
+}
+
 
 //Если форма отправлена, то...
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sign_up = $_POST;
-    $_POST['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $sign_up['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
     //ВАЛИДАЦИЯ ФОРМЫ
     $required = ['email', 'password', 'name', 'message'];
@@ -59,17 +66,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             [
                 'sign_up' => $sign_up,
                 'errors' => $errors,
-                'categories' => get_categories($con)
+                'categories' => $categories
             ]);
     } else {
 
         //подготавливаем выражение
-        $sql = 'INSERT INTO users (register_date, email, name, password, contact_info) VALUES
+        $sql = 'INSERT INTO users (register_date, email, password, name, contact_info) VALUES
 (NOW(), ?, ?, ?, ?);';
         $stmt = db_get_prepare_stmt($con, $sql, $sign_up);
         $res = mysqli_stmt_execute($stmt);
         if ($res) {
-            header("Location: pages/login.html");
+            header("Location: login.php");
         }
     }
 }
@@ -77,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'title' => 'Регистрация',
-    'categories' => get_categories($con),
+    'categories' => $categories,
     'user_name' => $user_name,
     'is_auth' => $is_auth
 ]);
