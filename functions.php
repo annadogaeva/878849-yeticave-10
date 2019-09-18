@@ -91,7 +91,7 @@ function get_lot_info($con) {
  *
  * @param string $name Полученное имя категории
  * @param string $allowed_list Разрешенный список категорий
- * @return string
+ * @return string|null
  */
 function validate_category($name, $allowed_list) {
     $id = $_POST[$name];
@@ -101,6 +101,12 @@ function validate_category($name, $allowed_list) {
     return null;
 };
 
+/**
+ * Производит валидацию цены при отправке формы
+ *
+ * @param string $name Полученное имя поля
+ * @return string|null
+ */
 function validate_price($name) {
     $price = $_POST[$name];
     if ($price <= 0 || !is_numeric($price)) {
@@ -110,6 +116,12 @@ function validate_price($name) {
     return null;
 }
 
+/**
+ * Производит валидацию шага ставки
+ *
+ * @param string $name Полученное имя поля
+ * @return string|null
+ */
 function validate_bid_step($name) {
     $bid = $_POST[$name];
     if ($bid <= 0 || filter_var($name, FILTER_VALIDATE_INT) === true)
@@ -120,6 +132,12 @@ function validate_bid_step($name) {
     return null;
 }
 
+/**
+ * Производит валидацию даты окончания торгов при отправке формы
+ *
+ * @param string $name Полученное имя поля
+ * @return string|null
+ */
 function validate_end_date($name) {
     $date = $_POST[$name];
 
@@ -132,6 +150,48 @@ function validate_end_date($name) {
     return null;
 }
 
+/**
+ * Сохраняет введенные ранее значения при валидации поля
+ *
+ * @param string $name Полученное имя поля
+ * @return string
+ */
 function getPostVal($name) {
     return $_POST[$name] ?? "";
 }
+
+/**
+ * Возвращает массив с использованными email
+ *
+ * @param mysqli $con База данных
+ * @return array
+ */
+function get_emails($con) {
+    $sql = 'SELECT email FROM users';
+    $result = mysqli_query($con, $sql);
+    $emails = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $emails = array_column($emails, 'email');
+
+    return $emails;
+};
+
+/**
+ * Производит проверку уникальности email адреса и соответствие формату email при регистрации нового пользователя
+ *
+ * @param string $name Полученное имя поля
+ * @param array список email-адресов
+ * @return string|null
+ */
+function validate_email($name, $list) {
+    $email = $_POST[$name];
+    if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (in_array($email, $list)) {
+            return "Указанный email уже используется другим пользователем";
+        }
+    } else {
+        return "Введите корректный e-mail адрес";
+    }
+
+    return null;
+};
+
