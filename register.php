@@ -17,7 +17,7 @@ $emails = get_emails($con);
 //Если форма отправлена, то...
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sign_up = $_POST;
-    $_POST['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $sign_up['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
     //ВАЛИДАЦИЯ ФОРМЫ
     $required = ['email', 'password', 'name', 'message'];
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
 
         //подготавливаем выражение
-        $sql = 'INSERT INTO users (register_date, email, name, password, contact_info) VALUES
+        $sql = 'INSERT INTO users (register_date, email, password, name, contact_info) VALUES
 (NOW(), ?, ?, ?, ?);';
         $stmt = db_get_prepare_stmt($con, $sql, $sign_up);
         $res = mysqli_stmt_execute($stmt);
