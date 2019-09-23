@@ -15,7 +15,7 @@
             <?php foreach ($lots as $lot): ?>
                 <li class="lots__item lot">
                     <div class="lot__image">
-                        <img src="<?= htmlspecialchars($lot['image']); ?>" width="350" height="260" alt="<?=$lot['name'] ?>">
+                        <img src="/<?= htmlspecialchars($lot['image']); ?>" width="350" height="260" alt="<?=$lot['name'] ?>">
                     </div>
                     <div class="lot__info">
                         <span class="lot__category"><?= htmlspecialchars($lot['name']); ?></span>
@@ -42,7 +42,7 @@
     <ul class="pagination-list">
         <li class="pagination-item pagination-item-prev"><a>Назад</a></li>
         <?php foreach ($pages as $page): ?>
-            <li class="pagination-item <?php if ($page == $cur_page): ?>pagination-item-active<?php endif; ?>"><a href="search.php/?page=<?=$page;?>"><?=$page;?></a></li>
+            <li class="pagination-item <?php if ($page == $cur_page): ?>pagination-item-active<?php endif; ?>"><a href="/search.php/?search=<?= $search; ?>&find=Найти&page=<?= $page; ?>"><?=$page;?></a></li>
         <?php endforeach; ?>
         <li class="pagination-item pagination-item-next"><a href="#">Вперед</a></li>
     </ul>
