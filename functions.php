@@ -32,9 +32,10 @@ function calculate_remaining_time($time) {
         $hours = date_interval_format($interval, '%h');
         $total_hours = sprintf('%02d', $days*24 + $hours);
         $minutes = date_interval_format($interval, '%I');
-        $result = [$total_hours, $minutes];
+        $seconds = date_interval_format($interval, '%S');
+        $result = [$total_hours, $minutes, $seconds];
     } else {
-        $result = ['00', '00'];
+        $result = ['00', '00', '00'];
     }
 
     return $result;
@@ -79,7 +80,7 @@ function get_lot_info($con) {
     $get_lot = $_GET['lot'];
     if (isset($get_lot)) {
         $lot_id = mysqli_real_escape_string($con, $_GET['lot']);
-        $sql = 'SELECT l.NAME, l.start_price, l.image, l.end_date, l.bid_step, l.description, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE l.id = ' . $lot_id . '';
+        $sql = 'SELECT l.id, l.NAME, l.start_price, l.image, l.end_date, l.bid_step, l.description, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE l.id = ' . $lot_id . '';
         $result = mysqli_query($con, $sql);
         $lot_info = mysqli_fetch_assoc($result);
         return $lot_info;
@@ -195,3 +196,78 @@ function validate_email($name, $list) {
     return null;
 };
 
+function validate_bid($name, $startprice, $minbid) {
+    $bid = $_POST[$name];
+    if ($bid <= 0 || filter_var($name, FILTER_VALIDATE_INT) === true) {
+        return 'Ставка должна быть целым числом больше ноля';
+    } elseif ($bid < ($startprice + $minbid)) {
+        return 'Ставка должна быть больше стартовой цены на сумму минимальной ставки';
+    };
+    return null;
+}
+
+function get_bid_info($con, $lot) {
+    $sql = 'SELECT b.id, b.DATE, b.SUM, u.name FROM bids b JOIN users u ON b.author_id = u.id WHERE lot_id =' . $lot . ' ORDER BY b.DATE DESC';
+    $result = mysqli_query($con, $sql);
+    $bids = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return $bids;
+};
+
+function date_to_words($time) {
+    $current_time = date_create('now');
+    $past_time = date_create($time);
+
+    $interval = date_diff($current_time, $past_time);
+
+    $days = date_interval_format($interval, '%a');
+    $hours = date_interval_format($interval, '%h');
+    $minutes = date_interval_format($interval, '%i');
+
+    $hours_words = get_noun_plural_form ($hours, час, часа, часов);
+    $minutes_words = get_noun_plural_form ($minutes, минуту, минуты, минут);
+
+    if($days) {
+        $time_days = date_format($past_time, 'd.m.y');
+        $time_hours = date_format($past_time, 'H:i');
+        print_r($time_days . ' в ' . $time_hours);
+    } elseif($hours) {
+        if($hours == 1) {
+            $time_string = 'Час назад';
+        } else {
+            $time_string = $hours . ' ' . $hours_words . ' назад';
+        };
+    } elseif (isset($minutes)) {
+        if($minutes == 0) {
+            $time_string = 'Только что';
+        } else {
+            $time_string = $minutes . ' ' . $minutes_words . ' назад';
+        };
+    };
+
+    return $time_string;
+};
+
+function get_my_bids($con) {
+    $sql = 'SELECT l.image, l.name, c.NAME, l.end_date, b.SUM, b.DATE, l.id FROM bids b JOIN lots l ON b.lot_id = l.id JOIN categories c ON l.category_id = c.id WHERE b.author_id = ' . $_SESSION['user']['id'] . '  ORDER BY b.DATE DESC';
+    $result = mysqli_query($con, $sql);
+    $my_bids = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return $my_bids;
+};
+
+function get_lots_to_close($con) {
+    $sql = 'SELECT id FROM lots WHERE end_date <= NOW() AND winner_id is NULL';
+    $result = mysqli_query($con, $sql);
+    $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return $lots;
+}
+
+function get_last_bid($con, $lot) {
+    $sql = 'SELECT id, author_id FROM bids WHERE lot_id = ' . $lot . ' LIMIT 1';
+    $result = mysqli_query($con, $sql);
+    $last_bid = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return $last_bid['0'];
+}
