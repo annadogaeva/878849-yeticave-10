@@ -17,6 +17,7 @@
     <ul class="lots__list">
         <!--заполните этот список из массива с товарами-->
         <?php foreach ($lots as $lot): ?>
+            <?php $remaining_time = calculate_remaining_time($lot['end_date']) ?>
             <li class="lots__item lot">
                 <div class="lot__image">
                     <img src="<?= htmlspecialchars($lot['image']); ?>" width="350" height="260" alt="">
@@ -30,11 +31,11 @@
                             <span class="lot__cost"><?= format_price(htmlspecialchars($lot['start_price'])); ?></span>
                         </div>
                         <div class="lot__timer timer
-                        <?php if((calculate_remaining_time($lot['end_date']))[0] === '00'){
+                        <?php if($remaining_time[0] === '00'){
                             print('timer--finishing');
                             };
                         ?>">
-                            <?= (calculate_remaining_time($lot['end_date']))[0] . ':' . (calculate_remaining_time($lot['end_date']))[1]; ?>
+                            <?= $remaining_time[0] . ':' . $remaining_time[1]; ?>
                         </div>
                     </div>
                 </div>

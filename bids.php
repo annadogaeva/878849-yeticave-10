@@ -2,18 +2,20 @@
 require_once('helpers.php');
 require_once('dbinit.php');
 require_once('functions.php');
-require_once('winner.php');
 
 $categories = get_categories($con);
 
-$page_content = include_template('main.php', [
+$my_bids = get_my_bids($con);
+
+
+$page_content = include_template('mybids.php', [
     'categories' => $categories,
-    'lots' => get_active_lots($con)
+    'my_bids' => $my_bids
 ]);
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'title' => 'Главная',
+    'title' => 'Мои ставки',
     'categories' => $categories,
     'user_name' => $user_name,
     'is_auth' => $is_auth
@@ -21,4 +23,3 @@ $layout_content = include_template('layout.php', [
 
 print($layout_content);
 ?>
-
