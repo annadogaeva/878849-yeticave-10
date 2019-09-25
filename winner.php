@@ -11,8 +11,5 @@ foreach ($lots_to_close as $lot) {
 
     $sql = 'UPDATE lots SET winner_id = ' . $lot_winner . ' WHERE id = ' . $lot['id'];
     $result = mysqli_query($con, $sql);
-    if($result) {
-        print_r('успех');
-    }
 }
 

@@ -35,7 +35,7 @@ function calculate_remaining_time($time) {
         $seconds = date_interval_format($interval, '%S');
         $result = [$total_hours, $minutes, $seconds];
     } else {
-        $result = ['00', '00', '00'];
+        $result = ['00', '00', '00', 'end'];
     }
 
     return $result;
@@ -196,6 +196,14 @@ function validate_email($name, $list) {
     return null;
 };
 
+/**
+ * Производит валидацию суммы ставки
+ *
+ * @param string $name Полученное имя поля
+ * @param string $startprice Стартовая цена
+ * @param string $minbid Минимальная ставка
+ * @return string|null
+ */
 function validate_bid($name, $startprice, $minbid) {
     $bid = $_POST[$name];
     if ($bid <= 0 || filter_var($name, FILTER_VALIDATE_INT) === true) {
@@ -206,6 +214,13 @@ function validate_bid($name, $startprice, $minbid) {
     return null;
 }
 
+/**
+ * Получает список ставок для конкретного лота
+ *
+ * @param mysqli $con База данных
+ * @param string $lot ID Лота
+ * @return array
+ */
 function get_bid_info($con, $lot) {
     $sql = 'SELECT b.id, b.DATE, b.SUM, u.name FROM bids b JOIN users u ON b.author_id = u.id WHERE lot_id =' . $lot . ' ORDER BY b.DATE DESC';
     $result = mysqli_query($con, $sql);
@@ -214,6 +229,12 @@ function get_bid_info($con, $lot) {
     return $bids;
 };
 
+/**
+ * Преобразует дату в словесную форму
+ *
+ * @param string $time Дата
+ * @return string
+ */
 function date_to_words($time) {
     $current_time = date_create('now');
     $past_time = date_create($time);
@@ -248,14 +269,26 @@ function date_to_words($time) {
     return $time_string;
 };
 
+/**
+ * Получает список ставок для текущего пользователя
+ *
+ * @param mysqli $con База данных
+ * @return array
+ */
 function get_my_bids($con) {
-    $sql = 'SELECT l.image, l.name, c.NAME, l.end_date, b.SUM, b.DATE, l.id FROM bids b JOIN lots l ON b.lot_id = l.id JOIN categories c ON l.category_id = c.id WHERE b.author_id = ' . $_SESSION['user']['id'] . '  ORDER BY b.DATE DESC';
+    $sql = 'SELECT l.image, l.name, c.NAME, l.end_date, b.SUM, b.DATE, b.author_id, l.id, l.start_price, l.winner_id FROM bids b JOIN lots l ON b.lot_id = l.id JOIN categories c ON l.category_id = c.id WHERE b.author_id = ' . $_SESSION['user']['id'] . '  ORDER BY b.DATE DESC';
     $result = mysqli_query($con, $sql);
     $my_bids = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     return $my_bids;
 };
 
+/**
+ * Получает список лотов, для которых необходимо определить победителя
+ *
+ * @param mysqli $con База данных
+ * @return array
+ */
 function get_lots_to_close($con) {
     $sql = 'SELECT id FROM lots WHERE end_date <= NOW() AND winner_id is NULL';
     $result = mysqli_query($con, $sql);
@@ -264,8 +297,15 @@ function get_lots_to_close($con) {
     return $lots;
 }
 
+/**
+ * Получает последнюю сделанную ставку для конкретного лота
+ *
+ * @param mysqli $con База данных
+ * @param string $lot ID Лота
+ * @return string
+ */
 function get_last_bid($con, $lot) {
-    $sql = 'SELECT id, author_id FROM bids WHERE lot_id = ' . $lot . ' LIMIT 1';
+    $sql = 'SELECT id, author_id FROM bids WHERE lot_id = ' . $lot . ' ORDER BY date DESC LIMIT 1';
     $result = mysqli_query($con, $sql);
     $last_bid = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
