@@ -7,7 +7,6 @@ $categories = get_categories($con);
 
 $my_bids = get_my_bids($con);
 
-
 $page_content = include_template('mybids.php', [
     'categories' => $categories,
     'my_bids' => $my_bids

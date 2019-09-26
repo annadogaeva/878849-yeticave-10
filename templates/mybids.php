@@ -4,7 +4,7 @@
             <li class="nav__item">
                 <a href="pages/all-lots.html"><?= htmlspecialchars($category['name']); ?></a>
             </li>
-        <?php endforeach?>
+        <?php endforeach ?>
     </ul>
 </nav>
 <section class="rates container">
@@ -34,8 +34,8 @@
                     </div>
                     <div>
                         <h3 class="rates__title"><a href="/lot.php?lot=<?= $bid['id']; ?>"><?= $bid['name']; ?></a></h3>
-                        <?php if($is_winner): ?>
-                            <p><?= $_SESSION['user']['contact_info'] ?></p>
+                        <?php if ($is_winner): ?>
+                            <p><?= $bid['lot_author_contact'] ?></p>
                         <?php endif; ?>
                     </div>
                 </td>
@@ -44,12 +44,12 @@
                 </td>
                 <td class="rates__timer">
                     <div class="timer <?= $win_timer_class; ?> <?= $dead_timer_class; ?> <?= $timer_class; ?>">
-                        <?php if(!empty($win_item_class)): ?>
+                        <?php if (!empty($win_item_class)): ?>
                             <?= 'Ставка выиграла'; ?>
-                        <?php elseif(!empty($dead_timer_class)): ?>
+                        <?php elseif (!empty($dead_timer_class)): ?>
                             <?= 'Торги окончены'; ?>
                         <?php else: ?>
-                            <?= $remaining_time[0] . ':' . $remaining_time[1]  . ':' . $remaining_time[2]; ?>
+                            <?= $remaining_time[0] . ':' . $remaining_time[1] . ':' . $remaining_time[2]; ?>
                         <?php endif ?>
                     </div>
                 </td>

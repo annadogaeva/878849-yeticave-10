@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     foreach ($required as $key) {
         if (empty($_POST[$key])) {
-            if($key == 'email') {
+            if ($key == 'email') {
                 $errors[$key] = 'Введите e-mail';
             } elseif ($key == 'password') {
                 $errors[$key] = 'Введите пароль';
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
-    if(count($errors)) {
+    if (count($errors)) {
         $page_content = include_template('loginpage.php',
             [
                 'sign_up' => $sign_up,

@@ -6,7 +6,7 @@ require_once('functions.php');
 $categories = get_categories($con);
 $emails = get_emails($con);
 
-if(!$is_auth) {
+if (!$is_auth) {
     $page_content = include_template('registration.php', [
         'categories' => $categories
     ]);
@@ -14,7 +14,7 @@ if(!$is_auth) {
     http_response_code(403);
 }
 
-if(http_response_code()== 403) {
+if (http_response_code() == 403) {
     $page_content = include_template('error.php', [
         'categories' => $categories
     ]);
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
 
     $rules = [
-        'email' => function() use ($emails) {
+        'email' => function () use ($emails) {
             return validate_email('email', $emails);
         }
     ];
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     foreach ($required as $key) {
         if (empty($_POST[$key])) {
-            if($key == 'name') {
+            if ($key == 'name') {
                 $errors[$key] = 'Введите имя';
             } elseif ($key == 'email') {
                 $errors[$key] = 'Введите e-mail';

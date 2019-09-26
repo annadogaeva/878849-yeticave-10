@@ -1,0 +1,6 @@
+{
+    "name": "dogaevaanna/localhost",
+    "require": {
+        "swiftmailer/swiftmailer": "^6.2"
+    }
+}

@@ -7,7 +7,7 @@ require_once('functions.php');
 $categories = get_categories($con);
 $cats_ids = array_column($categories, 'id');
 
-if($is_auth) {
+if ($is_auth) {
     $page_content = include_template('add-lot.php', [
         'categories' => $categories,
         'lots' => get_active_lots($con)
@@ -16,7 +16,7 @@ if($is_auth) {
     http_response_code(403);
 }
 
-if (http_response_code()== 403) {
+if (http_response_code() == 403) {
     $page_content = include_template('error.php', [
         'categories' => $categories
     ]);
@@ -33,16 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $rules = [
-        'category_id' => function() use ($cats_ids) {
+        'category_id' => function () use ($cats_ids) {
             return validate_category('category_id', $cats_ids);
         },
-        'start_price' => function() {
+        'start_price' => function () {
             return validate_price('start_price');
         },
-        'bid_step' => function() {
+        'bid_step' => function () {
             return validate_bid_step('bid_step');
         },
-        'end_date' => function() {
+        'end_date' => function () {
             return validate_end_date('end_date');
         }
     ];
@@ -88,9 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (count($errors)) {
         $page_content = include_template('add-lot.php',
             [
-            'lot' => $lot_post,
-            'errors' => $errors,
-            'categories' => $categories
+                'lot' => $lot_post,
+                'errors' => $errors,
+                'categories' => $categories
             ]);
     } else {
         //подготавливаем выражение

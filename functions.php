@@ -6,13 +6,16 @@
  * @param string $symbol - символ валюты
  * @return string
  */
-function format_price($num, $symbol = ' ₽') {
+function format_price($num, $symbol = ' ₽')
+{
     ceil($num);
     $num = number_format($num, 0, '.', ' ');
     $num = $num . $symbol;
 
     return $num;
-};
+}
+
+;
 
 /**
  * Считает остаток времени в часах и минутах от текущей до будущей даты.
@@ -21,7 +24,8 @@ function format_price($num, $symbol = ' ₽') {
  * @param string $time - будущая дата
  * @return array
  */
-function calculate_remaining_time($time) {
+function calculate_remaining_time($time)
+{
     $current_time = date_create('now');
     $future_time = date_create($time);
 
@@ -30,7 +34,7 @@ function calculate_remaining_time($time) {
 
         $days = date_interval_format($interval, '%a');
         $hours = date_interval_format($interval, '%h');
-        $total_hours = sprintf('%02d', $days*24 + $hours);
+        $total_hours = sprintf('%02d', $days * 24 + $hours);
         $minutes = date_interval_format($interval, '%I');
         $seconds = date_interval_format($interval, '%S');
         $result = [$total_hours, $minutes, $seconds];
@@ -39,7 +43,9 @@ function calculate_remaining_time($time) {
     }
 
     return $result;
-};
+}
+
+;
 
 /**
  * Возвращает массив с открытыми лотами
@@ -47,14 +53,17 @@ function calculate_remaining_time($time) {
  * @param mysqli $con База данных
  * @return array
  */
-function get_active_lots($con) {
-    $sql= 'SELECT l.NAME, l.start_price, l.image, l.end_date, l.id, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE end_date > NOW() ORDER BY start_date DESC
+function get_active_lots($con)
+{
+    $sql = 'SELECT l.NAME, l.start_price, l.image, l.end_date, l.id, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE end_date > NOW() ORDER BY start_date DESC
 ';
     $result = mysqli_query($con, $sql);
     $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     return $lots;
-};
+}
+
+;
 
 /**
  * Возвращает массив с категориями и симв. кодами
@@ -62,13 +71,16 @@ function get_active_lots($con) {
  * @param mysqli $con База данных
  * @return array
  */
-function get_categories($con) {
+function get_categories($con)
+{
     $sql = 'SELECT id, symbol_code, name FROM categories';
     $result = mysqli_query($con, $sql);
     $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     return $categories;
-};
+}
+
+;
 
 /**
  * Возвращает массив с информацией о текущем лоте, ссгласно GET запросу
@@ -76,7 +88,8 @@ function get_categories($con) {
  * @param mysqli $con База данных
  * @return array
  */
-function get_lot_info($con) {
+function get_lot_info($con)
+{
     $get_lot = $_GET['lot'];
     if (isset($get_lot)) {
         $lot_id = mysqli_real_escape_string($con, $_GET['lot']);
@@ -85,7 +98,9 @@ function get_lot_info($con) {
         $lot_info = mysqli_fetch_assoc($result);
         return $lot_info;
     }
-};
+}
+
+;
 
 /**
  * Производит валидацию категории при отправке формы
@@ -94,13 +109,16 @@ function get_lot_info($con) {
  * @param string $allowed_list Разрешенный список категорий
  * @return string|null
  */
-function validate_category($name, $allowed_list) {
+function validate_category($name, $allowed_list)
+{
     $id = $_POST[$name];
     if (!in_array($id, $allowed_list)) {
         return 'Указана несуществующая категория';
     }
     return null;
-};
+}
+
+;
 
 /**
  * Производит валидацию цены при отправке формы
@@ -108,7 +126,8 @@ function validate_category($name, $allowed_list) {
  * @param string $name Полученное имя поля
  * @return string|null
  */
-function validate_price($name) {
+function validate_price($name)
+{
     $price = $_POST[$name];
     if ($price <= 0 || !is_numeric($price)) {
         return "Содержимое поля «начальная цена» должно быть числом больше ноля.";
@@ -123,10 +142,10 @@ function validate_price($name) {
  * @param string $name Полученное имя поля
  * @return string|null
  */
-function validate_bid_step($name) {
+function validate_bid_step($name)
+{
     $bid = $_POST[$name];
-    if ($bid <= 0 || filter_var($name, FILTER_VALIDATE_INT) === true)
-    {
+    if ($bid <= 0 || filter_var($name, FILTER_VALIDATE_INT) === true) {
         return "Содержимое поля «шаг ставки» должно быть целым числом больше ноля";
     }
 
@@ -139,10 +158,11 @@ function validate_bid_step($name) {
  * @param string $name Полученное имя поля
  * @return string|null
  */
-function validate_end_date($name) {
+function validate_end_date($name)
+{
     $date = $_POST[$name];
 
-    if(!date_create($date)) {
+    if (!date_create($date)) {
         return "Содержимое поля «дата завершения» должно быть датой в формате «ГГГГ-ММ-ДД»";
     } elseif (date_create($date) <= date_create('now')) {
         return "Указанная дата должна быть больше текущей хотя бы на один день";
@@ -157,7 +177,8 @@ function validate_end_date($name) {
  * @param string $name Полученное имя поля
  * @return string
  */
-function getPostVal($name) {
+function getPostVal($name)
+{
     return $_POST[$name] ?? "";
 }
 
@@ -167,14 +188,17 @@ function getPostVal($name) {
  * @param mysqli $con База данных
  * @return array
  */
-function get_emails($con) {
+function get_emails($con)
+{
     $sql = 'SELECT email FROM users';
     $result = mysqli_query($con, $sql);
     $emails = mysqli_fetch_all($result, MYSQLI_ASSOC);
     $emails = array_column($emails, 'email');
 
     return $emails;
-};
+}
+
+;
 
 /**
  * Производит проверку уникальности email адреса и соответствие формату email при регистрации нового пользователя
@@ -183,9 +207,10 @@ function get_emails($con) {
  * @param array список email-адресов
  * @return string|null
  */
-function validate_email($name, $list) {
+function validate_email($name, $list)
+{
     $email = $_POST[$name];
-    if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
         if (in_array($email, $list)) {
             return "Указанный email уже используется другим пользователем";
         }
@@ -194,7 +219,9 @@ function validate_email($name, $list) {
     }
 
     return null;
-};
+}
+
+;
 
 /**
  * Производит валидацию суммы ставки
@@ -204,7 +231,8 @@ function validate_email($name, $list) {
  * @param string $minbid Минимальная ставка
  * @return string|null
  */
-function validate_bid($name, $startprice, $minbid) {
+function validate_bid($name, $startprice, $minbid)
+{
     $bid = $_POST[$name];
     if ($bid <= 0 || filter_var($name, FILTER_VALIDATE_INT) === true) {
         return 'Ставка должна быть целым числом больше ноля';
@@ -221,13 +249,16 @@ function validate_bid($name, $startprice, $minbid) {
  * @param string $lot ID Лота
  * @return array
  */
-function get_bid_info($con, $lot) {
+function get_bid_info($con, $lot)
+{
     $sql = 'SELECT b.id, b.DATE, b.SUM, u.name FROM bids b JOIN users u ON b.author_id = u.id WHERE lot_id =' . $lot . ' ORDER BY b.DATE DESC';
     $result = mysqli_query($con, $sql);
     $bids = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     return $bids;
-};
+}
+
+;
 
 /**
  * Преобразует дату в словесную форму
@@ -235,7 +266,8 @@ function get_bid_info($con, $lot) {
  * @param string $time Дата
  * @return string
  */
-function date_to_words($time) {
+function date_to_words($time)
+{
     $current_time = date_create('now');
     $past_time = date_create($time);
 
@@ -245,21 +277,21 @@ function date_to_words($time) {
     $hours = date_interval_format($interval, '%h');
     $minutes = date_interval_format($interval, '%i');
 
-    $hours_words = get_noun_plural_form ($hours, час, часа, часов);
-    $minutes_words = get_noun_plural_form ($minutes, минуту, минуты, минут);
+    $hours_words = get_noun_plural_form($hours, час, часа, часов);
+    $minutes_words = get_noun_plural_form($minutes, минуту, минуты, минут);
 
-    if($days) {
+    if ($days) {
         $time_days = date_format($past_time, 'd.m.y');
         $time_hours = date_format($past_time, 'H:i');
         print_r($time_days . ' в ' . $time_hours);
-    } elseif($hours) {
-        if($hours == 1) {
+    } elseif ($hours) {
+        if ($hours == 1) {
             $time_string = 'Час назад';
         } else {
             $time_string = $hours . ' ' . $hours_words . ' назад';
         };
     } elseif (isset($minutes)) {
-        if($minutes == 0) {
+        if ($minutes == 0) {
             $time_string = 'Только что';
         } else {
             $time_string = $minutes . ' ' . $minutes_words . ' назад';
@@ -267,7 +299,9 @@ function date_to_words($time) {
     };
 
     return $time_string;
-};
+}
+
+;
 
 /**
  * Получает список ставок для текущего пользователя
@@ -275,13 +309,16 @@ function date_to_words($time) {
  * @param mysqli $con База данных
  * @return array
  */
-function get_my_bids($con) {
-    $sql = 'SELECT l.image, l.name, c.NAME, l.end_date, b.SUM, b.DATE, b.author_id, l.id, l.start_price, l.winner_id FROM bids b JOIN lots l ON b.lot_id = l.id JOIN categories c ON l.category_id = c.id WHERE b.author_id = ' . $_SESSION['user']['id'] . '  ORDER BY b.DATE DESC';
+function get_my_bids($con)
+{
+    $sql = 'SELECT l.image, l.name, c.NAME, l.end_date, b.SUM, b.DATE, b.author_id, l.id, l.start_price, l.author_id AS lot_author, u.contact_info AS lot_author_contact,l.winner_id FROM bids b JOIN lots l ON b.lot_id = l.id JOIN categories c ON l.category_id = c.id JOIN users u ON l.author_id = u.id WHERE b.author_id = ' . $_SESSION['user']['id'] . '  ORDER BY b.DATE DESC';
     $result = mysqli_query($con, $sql);
     $my_bids = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     return $my_bids;
-};
+}
+
+;
 
 /**
  * Получает список лотов, для которых необходимо определить победителя
@@ -289,7 +326,8 @@ function get_my_bids($con) {
  * @param mysqli $con База данных
  * @return array
  */
-function get_lots_to_close($con) {
+function get_lots_to_close($con)
+{
     $sql = 'SELECT id FROM lots WHERE end_date <= NOW() AND winner_id is NULL';
     $result = mysqli_query($con, $sql);
     $lots = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -298,16 +336,51 @@ function get_lots_to_close($con) {
 }
 
 /**
- * Получает последнюю сделанную ставку для конкретного лота
+ * Получает победителя для лота
  *
  * @param mysqli $con База данных
  * @param string $lot ID Лота
- * @return string
+ * @return array
  */
-function get_last_bid($con, $lot) {
-    $sql = 'SELECT id, author_id FROM bids WHERE lot_id = ' . $lot . ' ORDER BY date DESC LIMIT 1';
+function get_lot_winner($con, $lot)
+{
+    $sql = 'SELECT b.author_id, u.email, u.name AS username, l.name, b.lot_id FROM bids b JOIN users u ON b.author_id = u.id JOIN lots l ON b.lot_id = l.id WHERE b.lot_id = ' . $lot . '  ORDER BY b.date DESC LIMIT 1';
     $result = mysqli_query($con, $sql);
-    $last_bid = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $winner = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    return $last_bid['0'];
+    return $winner[0];
+}
+
+function send_email($user) {
+    $username = $user['username'];
+    $email = $user['email'];
+    $title = $user['name'];
+    $lot = $user['lot_id'];
+    $my_bids = 'http://localhost/bids.php';
+
+// Create the Transport
+    $transport = (new Swift_SmtpTransport('phpdemo.ru', 25))
+        ->setUsername('keks@phpdemo.ru')
+        ->setPassword('htmlacademy')
+    ;
+
+// Create the Mailer using your created Transport
+    $mailer = new Swift_Mailer($transport);
+
+    $email_template = include_template('email.php', [
+            'username' => $username,
+            'lot' => $lot,
+            'title' => $title,
+            'my_bids' => $my_bids
+        ]);
+
+// Create a message
+    $message = (new Swift_Message('Ваша ставка победила'))
+        ->setFrom(['keks@phpdemo.ru'])
+        ->setTo([$email])
+        ->setBody($email_template, 'text/html')
+    ;
+
+// Send the message
+    $result = $mailer->send($message);
 }

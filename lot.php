@@ -20,7 +20,7 @@ if ($lot_info) {
     http_response_code(404);
 }
 
-if($_SERVER['REQUEST_METHOD'] === 'POST' and $is_auth) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' and $is_auth) {
     $bid_post = $_POST;
     $bid_post['author_id'] = $_SESSION['user']['id'];
     $bid_post['lot_id'] = $lot_info['id'];
@@ -50,31 +50,31 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' and $is_auth) {
         $stmt = db_get_prepare_stmt($con, $sql, $bid_post);
         $res = mysqli_stmt_execute($stmt);
 
-        if($res) {
-            $sql = 'UPDATE lots SET start_price = ? WHERE id = ' .  $lot_info['id'];
+        if ($res) {
+            $sql = 'UPDATE lots SET start_price = ? WHERE id = ' . $lot_info['id'];
             $stmt = db_get_prepare_stmt($con, $sql, $_POST);
             $res = mysqli_stmt_execute($stmt);
 
             $lot_info = get_lot_info($con);
             $bids_info = get_bid_info($con, $lot_info['id']);
 
-                if($res) {
-                    $page_content = include_template('lotpage.php',
-                        [
-                            'categories' => $categories,
-                            'lot_info' => $lot_info,
-                            'is_auth' => $is_auth,
-                            'bids' => $bids_info
-                        ]);
+            if ($res) {
+                $page_content = include_template('lotpage.php',
+                    [
+                        'categories' => $categories,
+                        'lot_info' => $lot_info,
+                        'is_auth' => $is_auth,
+                        'bids' => $bids_info
+                    ]);
 
-                    header("Location: " . $_SERVER['REQUEST_URI']);
-                    exit();
-                }
+                header("Location: " . $_SERVER['REQUEST_URI']);
+                exit();
+            }
         }
     };
 }
 
-if (http_response_code()== 404) {
+if (http_response_code() == 404) {
     $page_content = include_template('404.php', [
         'categories' => $categories
     ]);
