@@ -1,6 +1,6 @@
 <?php
-ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 1);
+//ini_set('error_reporting', E_ALL);
+//ini_set('display_errors', 1);
 
 require_once('helpers.php');
 require_once('init.php');
@@ -39,7 +39,7 @@ if(!$is_auth) {
             };
         };
 
-        $email = mysqli_real_escape_string($con, $login['email']);
+        $email = mysqli_real_escape_string($con, $login['email']); //защищен
         $sql = "SELECT * FROM users WHERE email = '$email'";
         $res = mysqli_query($con, $sql);
         $user = $res ? mysqli_fetch_array($res, MYSQLI_ASSOC) : null;

@@ -271,6 +271,7 @@ function validate_bid($name, $startprice, $minbid)
  */
 function get_bid_info($con, $lot)
 {
+    $lot = mysqli_real_escape_string($con, $lot);
     $sql = 'SELECT b.id, b.DATE, b.SUM, u.name FROM bids b JOIN users u ON b.author_id = u.id WHERE lot_id =' . $lot . ' ORDER BY b.DATE DESC';
     $result = mysqli_query($con, $sql);
     $bids = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -364,6 +365,7 @@ function get_lots_to_close($con)
  */
 function get_lot_winner($con, $lot)
 {
+    $lot = mysqli_real_escape_string($con, $lot);
     $sql = 'SELECT b.author_id, u.email, u.name AS username, l.name, b.lot_id FROM bids b JOIN users u ON b.author_id = u.id JOIN lots l ON b.lot_id = l.id WHERE b.lot_id = ' . $lot . '  ORDER BY b.date DESC LIMIT 1';
     $result = mysqli_query($con, $sql);
     $winner = mysqli_fetch_all($result, MYSQLI_ASSOC);
