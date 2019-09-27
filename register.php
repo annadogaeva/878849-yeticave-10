@@ -1,88 +1,86 @@
 <?php
+
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+
 require_once('helpers.php');
-require_once('dbinit.php');
+require_once('init.php');
 require_once('functions.php');
 
 $categories = get_categories($con);
 $emails = get_emails($con);
 
+$navigation = include_template('navigation.php', [
+    'categories' => $categories
+]);
+
+//если не авторизован, показать форму, если авторизован - показать ошибку
 if (!$is_auth) {
-    $page_content = include_template('registration.php', [
-        'categories' => $categories
-    ]);
+    $page_content = include_template('registration.php');
 } else {
-    http_response_code(403);
-}
+    $page_content = show_error(403);
+};
 
-if (http_response_code() == 403) {
-    $page_content = include_template('error.php', [
-        'categories' => $categories
-    ]);
-}
-
-
-//Если форма отправлена, то...
+//если форма отправлена, то...
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sign_up = $_POST;
-    $sign_up['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    //ВАЛИДАЦИЯ ФОРМЫ
+    //валидация формы
     $required = ['email', 'password', 'name', 'message'];
     $errors = [];
 
     $rules = [
         'email' => function () use ($emails) {
             return validate_email('email', $emails);
-        }
+        };
     ];
 
     foreach ($_POST as $key => $value) {
         if (isset($rules[$key])) {
             $rule = $rules[$key];
             $errors[$key] = $rule();
-        }
-    }
+        };
+    };
 
     $errors = array_filter($errors);
 
     foreach ($required as $key) {
         if (empty($_POST[$key])) {
-            if ($key == 'name') {
+            if ($key === 'name') {
                 $errors[$key] = 'Введите имя';
-            } elseif ($key == 'email') {
+            } elseif ($key === 'email') {
                 $errors[$key] = 'Введите e-mail';
-            } elseif ($key == 'password') {
+            } elseif ($key === 'password') {
                 $errors[$key] = 'Введите пароль';
-            } elseif ($key == 'message') {
+            } elseif ($key === 'message') {
                 $errors[$key] = 'Напишите как с вами связаться';
             } else {
                 $errors[$key] = 'Заполните это поле';
-            }
-        }
-    }
+            };
+        };
+    };
 
+    //если есть ошибки, показать ошибки
     if (count($errors)) {
         $page_content = include_template('registration.php',
             [
                 'sign_up' => $sign_up,
-                'errors' => $errors,
-                'categories' => $categories
+                'errors' => $errors
             ]);
-    } else {
+    } else { //если нет ошибок, зарегистрировать пользователя
+        $sign_up['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $registered = insert_new_user($con, $sign_up);
 
-        //подготавливаем выражение
-        $sql = 'INSERT INTO users (register_date, email, password, name, contact_info) VALUES
-(NOW(), ?, ?, ?, ?);';
-        $stmt = db_get_prepare_stmt($con, $sql, $sign_up);
-        $res = mysqli_stmt_execute($stmt);
-        if ($res) {
+        //если пользователен зарегистрирован, перенаправить на страницу логина
+        if ($registered) {
             header("Location: login.php");
-        }
-    }
+        };
+    };
 }
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
+    'navigation' => $navigation,
     'title' => 'Регистрация',
     'categories' => $categories,
     'user_name' => $user_name,

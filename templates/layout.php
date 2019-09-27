@@ -16,7 +16,7 @@
                 <img src="../img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
             </a>
             <form class="main-header__search" method="get" action="search.php" autocomplete="off">
-                <input type="search" name="search" placeholder="Поиск лота" value="<?= $search ?>">
+                <input type="search" name="search" placeholder="Поиск лота" value="<?= $search = $search ?? '' ?>">
                 <input class="main-header__search-btn" type="submit" name="find" value="Найти">
             </form>
             <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
@@ -43,12 +43,11 @@
             </nav>
         </div>
     </header>
-
-    <main <?php if ($_SERVER[REQUEST_URI] == "/") {
-        echo('class="container"');
-    }
+    <?php
+    $classname = ($_SERVER['REQUEST_URI'] === "/") ? 'container' : '';
     ?>
-    >
+    <main class="<?= $classname; ?>">
+        <?= $navigation; ?>
         <?= $content; ?>
     </main>
 </div>
@@ -58,8 +57,11 @@
         <ul class="nav__list container">
             <!--заполните этот список из массива категорий-->
             <?php foreach ($categories as $category): ?>
-                <li class="nav__item">
-                    <a href="pages/all-lots.html"><?= htmlspecialchars($category['name']) ?></a>
+                <?php if(isset($category_name)) {
+                    $current_category = ($category['name'] === $category_name) ? 'nav__item--current' : '';
+                } ?>
+                <li class="nav__item <?= $current_category ?>">
+                    <a href="/categories.php?category=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']) ?></a>
                 </li>
             <?php endforeach ?>
         </ul>

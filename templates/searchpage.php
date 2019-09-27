@@ -1,18 +1,20 @@
-<nav class="nav">
-    <ul class="nav__list container">
-        <?php foreach ($categories as $category): ?>
-            <li class="nav__item">
-                <a href="pages/all-lots.html"><?= htmlspecialchars($category['name']); ?></a>
-            </li>
-        <?php endforeach ?>
-    </ul>
-</nav>
 <div class="container">
     <section class="lots">
         <?php if ($lots): ?>
         <h2>Результаты поиска по запросу «<span><?= $search ?></span>»</h2>
         <ul class="lots__list">
             <?php foreach ($lots as $lot): ?>
+
+                <?php
+                $remaining_time = calculate_remaining_time($lot['end_date']);
+
+                $is_dead = $remaining_time['status'] === 'end';
+                $is_finishing = $remaining_time['hours'] === '00' && !$is_dead;
+
+                $timer_class = $is_finishing ? 'timer--finishing' : '';
+                $dead_timer_class = $is_dead ? 'timer--end' : '';
+                ?>
+
                 <li class="lots__item lot">
                     <div class="lot__image">
                         <img src="/<?= htmlspecialchars($lot['image']); ?>" width="350" height="260"
@@ -29,12 +31,12 @@
                                 <span
                                     class="lot__cost"><?= format_price(htmlspecialchars($lot['start_price'])); ?></span>
                             </div>
-                            <div class="lot__timer timer
-                        <?php if ((calculate_remaining_time($lot['end_date']))[0] === '00') {
-                                print('timer--finishing');
-                            };
-                            ?>">
-                                <?= (calculate_remaining_time($lot['end_date']))[0] . ':' . (calculate_remaining_time($lot['end_date']))[1]; ?>
+                            <div class="lot__timer timer <?= $timer_class; ?> <?= $dead_timer_class; ?>">
+                                <?php if ($is_dead): ?>
+                                <?= 'Торги окончены'; ?>
+                                <?php else: ?>
+                                <?= $remaining_time['hours'] . ':' . $remaining_time['minutes'] ; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -48,7 +50,7 @@
                     <?php if ($cur_page > 1): ?>href="/search.php/?search=<?= $search; ?>&find=Найти&page=<?= $cur_page - 1; ?>"<?php endif; ?>>Назад</a>
             </li>
             <?php foreach ($pages as $page): ?>
-                <li class="pagination-item <?php if ($page == $cur_page): ?>pagination-item-active<?php endif; ?>"><a
+                <li class="pagination-item <?php if ($page === $cur_page): ?>pagination-item-active<?php endif; ?>"><a
                         href="/search.php/?search=<?= $search; ?>&find=Найти&page=<?= $page; ?>"><?= $page; ?></a></li>
             <?php endforeach; ?>
             <li class="pagination-item pagination-item-next"><a

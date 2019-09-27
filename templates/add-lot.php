@@ -1,12 +1,3 @@
-<nav class="nav">
-    <ul class="nav__list container">
-        <?php foreach ($categories as $category): ?>
-            <li class="nav__item">
-                <a href="pages/all-lots.html"><?= htmlspecialchars($category['name']); ?></a>
-            </li>
-        <?php endforeach ?>
-    </ul>
-</nav>
 <?php $classname = isset($errors) ? "form--invalid" : ""; ?>
 <form class="form form--add-lot container <?= $classname; ?>" action="add.php" method="post"
       enctype="multipart/form-data"> <!-- form--invalid -->
@@ -26,7 +17,7 @@
                 <option>Выберите категорию</option>
                 <?php foreach ($categories as $category): ?>
                     <option value="<?= htmlspecialchars($category['id']); ?>"
-                            <?php if ($_POST['category_id'] == $category['id']) : ?>selected<?php endif; ?>><?= htmlspecialchars($category['name']); ?></option>
+                            <?php if ($_POST['category_id'] === $category['id']) : ?>selected<?php endif; ?>><?= htmlspecialchars($category['name']); ?></option>
                 <?php endforeach ?>
             </select>
             <span class="form__error"><?= $errors['category_id'] ?></span>

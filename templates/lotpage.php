@@ -1,12 +1,3 @@
-<nav class="nav">
-    <ul class="nav__list container">
-        <?php foreach ($categories as $category): ?>
-            <li class="nav__item">
-                <a href="pages/all-lots.html"><?= htmlspecialchars($category['name']); ?></a>
-            </li>
-        <?php endforeach ?>
-    </ul>
-</nav>
 <section class="lot-item container">
     <h2><?= htmlspecialchars($lot_info['NAME']); ?></h2>
     <div class="lot-item__content">
@@ -19,14 +10,21 @@
             <p class="lot-item__description"><?= htmlspecialchars($lot_info['description']); ?></p>
         </div>
         <div class="lot-item__right">
-            <?php if ($is_auth): ?>
+
+            <?php
+            $remaining_time = calculate_remaining_time($lot_info['end_date']);
+
+            $is_dead = $remaining_time['status'] === 'end';
+            $is_finishing = $remaining_time['hours'] === '00' && !$is_dead;
+
+            $timer_class = $is_finishing ? 'timer--finishing' : '';
+            ?>
+
+            <?php if ($is_auth && !$is_dead) : ?>
                 <div class="lot-item__state">
                     <div
-                        class="lot-item__timer timer <?php if ((calculate_remaining_time($lot_info['end_date']))[0] === '00') {
-                            print('timer--finishing');
-                        };
-                        ?>">
-                        <?= (calculate_remaining_time($lot_info['end_date']))[0] . ':' . (calculate_remaining_time($lot_info['end_date']))[1]; ?>
+                        class="lot-item__timer timer <?= $timer_class; ?> <?= $dead_timer_class; ?>">
+                            <?= $remaining_time['hours'] . ':' . $remaining_time['minutes'] ; ?>
                     </div>
                     <div class="lot-item__cost-state">
                         <div class="lot-item__rate">
