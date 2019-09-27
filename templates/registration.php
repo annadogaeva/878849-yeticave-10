@@ -1,12 +1,4 @@
-<nav class="nav">
-    <ul class="nav__list container">
-        <?php foreach ($categories as $category): ?>
-            <li class="nav__item">
-                <a href="pages/all-lots.html"><?= htmlspecialchars($category['name']); ?></a>
-            </li>
-        <?php endforeach?>
-    </ul>
-</nav>
+
 <?php $classname = isset($errors) ? "form--invalid" : ""; ?>
 <form class="form container form--invalid <?= $classname; ?>" action="register.php" method="post" autocomplete="off"> <!-- form
     --invalid -->
@@ -35,8 +27,8 @@
         <textarea id="message" name="message" placeholder="Напишите как с вами связаться"></textarea>
         <span class="form__error"><?= $errors['message'] ?></span>
     </div>
-    <?php if(isset($errors)): ?>
-    <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
+    <?php if (isset($errors)): ?>
+        <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
     <?php endif; ?>
     <button type="submit" class="button">Зарегистрироваться</button>
     <a class="text-link" href="login.php">Уже есть аккаунт</a>

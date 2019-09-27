@@ -1,22 +1,15 @@
-<nav class="nav">
-    <ul class="nav__list container">
-        <?php foreach ($categories as $category): ?>
-            <li class="nav__item">
-                <a href="pages/all-lots.html"><?= htmlspecialchars($category['name']); ?></a>
-            </li>
-        <?php endforeach?>
-    </ul>
-</nav>
+
 <section class="rates container">
     <h2>Мои ставки</h2>
+    <?php if($my_bids): ?>
     <table class="rates__list">
         <?php foreach ($my_bids as $bid): ?>
 
             <?php
             $remaining_time = calculate_remaining_time($bid['end_date']);
             $is_winner = $bid['winner_id'] === $_SESSION['user']['id'] && $bid['SUM'] === $bid['start_price'];
-            $is_dead = $remaining_time[3] == 'end' && !$is_winner;
-            $is_finishing = $remaining_time[0] === '00' && !$is_dead;
+            $is_dead = $remaining_time['status'] === 'end' && !$is_winner;
+            $is_finishing = $remaining_time['hours'] === '00' && !$is_dead;
 
             $timer_class = $is_finishing ? 'timer--finishing' : '';
 
@@ -34,8 +27,8 @@
                     </div>
                     <div>
                         <h3 class="rates__title"><a href="/lot.php?lot=<?= $bid['id']; ?>"><?= $bid['name']; ?></a></h3>
-                        <?php if($is_winner): ?>
-                            <p><?= $_SESSION['user']['contact_info'] ?></p>
+                        <?php if ($is_winner): ?>
+                            <p><?= $bid['lot_author_contact'] ?></p>
                         <?php endif; ?>
                     </div>
                 </td>
@@ -44,12 +37,12 @@
                 </td>
                 <td class="rates__timer">
                     <div class="timer <?= $win_timer_class; ?> <?= $dead_timer_class; ?> <?= $timer_class; ?>">
-                        <?php if(!empty($win_item_class)): ?>
+                        <?php if ($is_winner): ?>
                             <?= 'Ставка выиграла'; ?>
-                        <?php elseif(!empty($dead_timer_class)): ?>
+                        <?php elseif ($is_dead): ?>
                             <?= 'Торги окончены'; ?>
                         <?php else: ?>
-                            <?= $remaining_time[0] . ':' . $remaining_time[1]  . ':' . $remaining_time[2]; ?>
+                            <?= $remaining_time['hours'] . ':' . $remaining_time['minutes'] . ':' . $remaining_time['seconds']; ?>
                         <?php endif ?>
                     </div>
                 </td>
@@ -62,4 +55,7 @@
             </tr>
         <?php endforeach; ?>
     </table>
+    <?php else: ?>
+    <p>Пока вы не сделали ни одной ставки</p>
+    <?php endif; ?>
 </section>

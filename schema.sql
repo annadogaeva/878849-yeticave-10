@@ -47,6 +47,7 @@ CREATE TABLE users
 );
 
 CREATE UNIQUE INDEX category_name ON categories(name);
+CREATE INDEX categories_search ON lots(category_id);
 CREATE INDEX lot_name ON lots(name);
 CREATE INDEX bid_sum ON bids(sum);
 CREATE INDEX user_name ON users(name);
