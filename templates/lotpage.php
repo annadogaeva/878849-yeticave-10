@@ -3,7 +3,7 @@
     <div class="lot-item__content">
         <div class="lot-item__left">
             <div class="lot-item__image">
-                <img src="<?= $lot_info['image']; ?>" width="730" height="548"
+                <img src="<?= htmlspecialchars($lot_info['image']); ?>" width="730" height="548"
                      alt="<?= htmlspecialchars($lot_info['NAME']); ?>">
             </div>
             <p class="lot-item__category">Категория: <span><?= htmlspecialchars($lot_info['name']); ?></span></p>
@@ -41,7 +41,7 @@
                         <?php $classname = isset($errors['cost']) ? "form__item--invalid" : ""; ?>
                         <p class="lot-item__form-item form__item <?= $classname; ?>">
                             <label for="cost">Ваша ставка</label>
-                            <?php $placeholder = format_price($lot_info['start_price'] + $lot_info['bid_step'], ''); ?>
+                            <?php $placeholder = format_price(htmlspecialchars($lot_info['start_price'] + $lot_info['bid_step']), ''); ?>
                             <input id="cost" type="text" name="cost" placeholder="<?= $placeholder ?>">
                             <span class="form__error"><?= $errors['cost'] ?></span>
                         </p>

@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rules = [
         'email' => function () use ($emails) {
             return validate_email('email', $emails);
-        };
+        }
     ];
 
     foreach ($_POST as $key => $value) {

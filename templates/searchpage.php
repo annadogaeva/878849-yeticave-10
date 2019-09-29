@@ -1,7 +1,7 @@
 <div class="container">
     <section class="lots">
         <?php if ($lots): ?>
-        <h2>Результаты поиска по запросу «<span><?= $search ?></span>»</h2>
+        <h2>Результаты поиска по запросу «<span><?= htmlspecialchars($search); ?></span>»</h2>
         <ul class="lots__list">
             <?php foreach ($lots as $lot): ?>
 
@@ -18,7 +18,7 @@
                 <li class="lots__item lot">
                     <div class="lot__image">
                         <img src="/<?= htmlspecialchars($lot['image']); ?>" width="350" height="260"
-                             alt="<?= $lot['name'] ?>">
+                             alt="<?= htmlspecialchars($lot['name']); ?>">
                     </div>
                     <div class="lot__info">
                         <span class="lot__category"><?= htmlspecialchars($lot['name']); ?></span>
@@ -47,14 +47,14 @@
     <?php if ($pages_count > 1): ?>
         <ul class="pagination-list">
             <li class="pagination-item pagination-item-prev"><a
-                    <?php if ($cur_page > 1): ?>href="/search.php/?search=<?= $search; ?>&find=Найти&page=<?= $cur_page - 1; ?>"<?php endif; ?>>Назад</a>
+                    <?php if ($cur_page > 1): ?>href="/search.php/?search=<?= htmlspecialchars($search); ?>&find=Найти&page=<?= $cur_page - 1; ?>"<?php endif; ?>>Назад</a>
             </li>
             <?php foreach ($pages as $page): ?>
                 <li class="pagination-item <?php if ($page === $cur_page): ?>pagination-item-active<?php endif; ?>"><a
-                        href="/search.php/?search=<?= $search; ?>&find=Найти&page=<?= $page; ?>"><?= $page; ?></a></li>
+                        href="/search.php/?search=<?= htmlspecialchars($search); ?>&find=Найти&page=<?= $page; ?>"><?= $page; ?></a></li>
             <?php endforeach; ?>
             <li class="pagination-item pagination-item-next"><a
-                    <?php if ($cur_page < count($pages)): ?>href="/search.php/?search=<?= $search; ?>&find=Найти&page=<?= $cur_page + 1; ?>"<?php endif; ?>>Вперед</a>
+                    <?php if ($cur_page < count($pages)): ?>href="/search.php/?search=<?= htmlspecialchars($search); ?>&find=Найти&page=<?= $cur_page + 1; ?>"<?php endif; ?>>Вперед</a>
             </li>
         </ul>
     <?php endif; ?>

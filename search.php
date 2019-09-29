@@ -13,6 +13,7 @@ $lots = [];
 $search = $_GET['search'] ?? '';
 $search = trim($search);
 
+
 if ($search) {
     $cur_page = $_GET['page'] ?? 1; //текущая страница
     $page_items = 9; //кол-во элементов на странице
