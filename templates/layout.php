@@ -16,7 +16,8 @@
                 <img src="../img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
             </a>
             <form class="main-header__search" method="get" action="search.php" autocomplete="off">
-                <input type="search" name="search" placeholder="Поиск лота" value="<?= $search = htmlspecialchars($search) ?? '' ?>">
+                <input type="search" name="search" placeholder="Поиск лота"
+                       value="<?= isset($search) ? htmlspecialchars($search) : '' ?>">
                 <input class="main-header__search-btn" type="submit" name="find" value="Найти">
             </form>
             <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
@@ -26,7 +27,7 @@
                 <!-- здесь должен быть PHP код для показа меню и данных пользователя -->
                 <?php if ($is_auth): ?>
                     <div class="user-menu__logged">
-                        <p><?= htmlspecialchars($user_name) ?></p>
+                        <p><?= htmlspecialchars($user_name); ?></p>
                         <a class="user-menu__bets" href="bids.php">Мои ставки</a>
                         <a class="user-menu__logout" href="logout.php">Выход</a>
                     </div>
@@ -47,7 +48,7 @@
     $classname = ($_SERVER['REQUEST_URI'] === "/") ? 'container' : '';
     ?>
     <main class="<?= $classname; ?>">
-        <?= $navigation; ?>
+        <?= isset($navigation) ? $navigation : ''; ?>
         <?= $content; ?>
     </main>
 </div>
@@ -57,11 +58,11 @@
         <ul class="nav__list container">
             <!--заполните этот список из массива категорий-->
             <?php foreach ($categories as $category): ?>
-                <?php if(isset($category_name)) {
+                <?php if (isset($category_name)) {
                     $current_category = ($category['name'] === $category_name) ? 'nav__item--current' : '';
                 } ?>
-                <li class="nav__item <?= $current_category ?>">
-                    <a href="/categories.php?category=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']) ?></a>
+                <li class="nav__item <?= $current_category; ?>">
+                    <a href="/categories.php?category=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
                 </li>
             <?php endforeach ?>
         </ul>

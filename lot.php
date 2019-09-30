@@ -1,7 +1,7 @@
 <?php
 
-//ini_set('error_reporting', E_ALL);
-//ini_set('display_errors', 1);
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
 
 require_once('helpers.php');
 require_once('init.php');
@@ -9,6 +9,8 @@ require_once('functions.php');
 
 $categories = get_categories($con);
 $lot_info = get_lot_info($con);
+$title = '';
+$last_bid = '';
 
 $navigation = include_template('navigation.php', [
     'categories' => $categories
@@ -17,10 +19,12 @@ $navigation = include_template('navigation.php', [
 //если есть лот с таким id, то показать его
 if ($lot_info) {
     $bids_info = get_bid_info($con, $lot_info['id']);
+    $last_bid = get_last_bid($con, $lot_info['id']);
     $page_content = include_template('lotpage.php', [
         'lot_info' => $lot_info,
         'is_auth' => $is_auth,
-        'bids' => $bids_info
+        'bids' => $bids_info,
+        'last_bid' => $last_bid
     ]);
     $title = $lot_info['NAME'];
 } else { //если нет, то показать ошибку 404
@@ -48,7 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and $is_auth) {
                 'lot_info' => $lot_info,
                 'is_auth' => $is_auth,
                 'errors' => $errors,
-                'bids' => $bids_info
+                'bids' => $bids_info,
+                'last_bid' => $last_bid
             ]);
     } else { //если ошибок нет, то добавить новую ставку и обновить цену лота
 
@@ -67,7 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' and $is_auth) {
                     [
                         'lot_info' => $lot_info,
                         'is_auth' => $is_auth,
-                        'bids' => $bids_info
+                        'bids' => $bids_info,
+                        'last_bid' => $last_bid
                     ]);
 
             };

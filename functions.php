@@ -2,7 +2,7 @@
 /**
  * Форматирует цену с разделителями групп разрядов и добавляет знак валюты ₽
  *
- * @param number $string|$num - изначальная цена
+ * @param number $string |$num - изначальная цена
  * @param string $symbol - символ валюты
  * @return string
  */
@@ -98,21 +98,23 @@ function get_categories($con)
  * @param mysqli $con База данных
  * @return array
  */
-function get_lot_info($con) {
-    if(!empty($_GET['lot'])) {
+function get_lot_info($con)
+{
+    if (!empty($_GET['lot'])) {
         $lot_id = mysqli_real_escape_string($con, $_GET['lot']);
-        $sql = 'SELECT l.id, l.NAME, l.start_price, l.image, l.end_date, l.bid_step, l.description, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE l.id = ' . $lot_id . '';
+        $sql = 'SELECT l.id, l.NAME, l.start_price, l.image, l.end_date, l.bid_step, l.description, l.author_id, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE l.id = ' . $lot_id . '';
         $result = mysqli_query($con, $sql);
         $lot_info = mysqli_fetch_assoc($result);
         return $lot_info;
     }
-        return null;
+    return null;
 }
 
 ;
 
-function get_category_info($con) {
-    if(!empty($_GET['category'])) {
+function get_category_info($con)
+{
+    if (!empty($_GET['category'])) {
         $category_id = mysqli_real_escape_string($con, $_GET['category']);
         $sql = 'SELECT id, name FROM categories WHERE id = ' . $category_id;
         $result = mysqli_query($con, $sql);
@@ -121,6 +123,8 @@ function get_category_info($con) {
     }
     return null;
 }
+
+;
 
 /**
  * Производит валидацию категории при отправке формы
@@ -156,6 +160,8 @@ function validate_price($name)
     return null;
 }
 
+;
+
 /**
  * Производит валидацию шага ставки
  *
@@ -171,6 +177,8 @@ function validate_bid_step($name)
 
     return null;
 }
+
+;
 
 /**
  * Производит валидацию даты окончания торгов при отправке формы
@@ -191,6 +199,8 @@ function validate_end_date($name)
     return null;
 }
 
+;
+
 /**
  * Сохраняет введенные ранее значения при валидации поля
  *
@@ -201,6 +211,8 @@ function getPostVal($name)
 {
     return $_POST[$name] ?? "";
 }
+
+;
 
 /**
  * Возвращает массив с использованными email
@@ -262,6 +274,8 @@ function validate_bid($name, $startprice, $minbid)
     return null;
 }
 
+;
+
 /**
  * Получает список ставок для конкретного лота
  *
@@ -301,6 +315,8 @@ function date_to_words($time)
     $hours_words = get_noun_plural_form($hours, 'час', 'часа', 'часов');
     $minutes_words = get_noun_plural_form($minutes, 'минуту', 'минуты', 'минут');
 
+    $time_string = '';
+
     if ($days) {
         $time_days = date_format($past_time, 'd.m.y');
         $time_hours = date_format($past_time, 'H:i');
@@ -332,11 +348,15 @@ function date_to_words($time)
  */
 function get_my_bids($con)
 {
-    $sql = 'SELECT l.image, l.name, c.NAME, l.end_date, b.SUM, b.DATE, b.author_id, l.id, l.start_price, l.author_id AS lot_author, u.contact_info AS lot_author_contact,l.winner_id FROM bids b JOIN lots l ON b.lot_id = l.id JOIN categories c ON l.category_id = c.id JOIN users u ON l.author_id = u.id WHERE b.author_id = ' . $_SESSION['user']['id'] . '  ORDER BY b.DATE DESC';
-    $result = mysqli_query($con, $sql);
-    $my_bids = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    if ($_SESSION) {
+        $user = $_SESSION['user']['id'];
+        $sql = 'SELECT l.image, l.name, c.NAME, l.end_date, b.SUM, b.DATE, b.author_id, l.id, l.start_price, l.author_id AS lot_author, u.contact_info AS lot_author_contact,l.winner_id FROM bids b JOIN lots l ON b.lot_id = l.id JOIN categories c ON l.category_id = c.id JOIN users u ON l.author_id = u.id WHERE b.author_id = ' . $user . '  ORDER BY b.DATE DESC';
+        $result = mysqli_query($con, $sql);
+        $my_bids = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    return $my_bids;
+        return $my_bids;
+    }
+    return null;
 }
 
 ;
@@ -356,6 +376,8 @@ function get_lots_to_close($con)
     return $lots;
 }
 
+;
+
 /**
  * Получает победителя для лота
  *
@@ -368,17 +390,20 @@ function get_lot_winner($con, $lot)
     $lot = mysqli_real_escape_string($con, $lot);
     $sql = 'SELECT b.author_id, u.email, u.name AS username, l.name, b.lot_id FROM bids b JOIN users u ON b.author_id = u.id JOIN lots l ON b.lot_id = l.id WHERE b.lot_id = ' . $lot . '  ORDER BY b.date DESC LIMIT 1';
     $result = mysqli_query($con, $sql);
-    $winner = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $winner = mysqli_fetch_assoc($result);
 
-    return $winner[0];
+    return $winner;
 }
+
+;
 
 /**
  * Отправляет поздравительное письмо победителю
  *
  * @param array $user
  */
-function send_email($user) {
+function send_email($user)
+{
     $username = $user['username'];
     $email = $user['email'];
     $title = $user['name'];
@@ -388,29 +413,29 @@ function send_email($user) {
 // Create the Transport
     $transport = (new Swift_SmtpTransport('phpdemo.ru', 25))
         ->setUsername('keks@phpdemo.ru')
-        ->setPassword('htmlacademy')
-    ;
+        ->setPassword('htmlacademy');
 
 // Create the Mailer using your created Transport
     $mailer = new Swift_Mailer($transport);
 
     $email_template = include_template('email.php', [
-            'username' => $username,
-            'lot' => $lot,
-            'title' => $title,
-            'my_bids' => $my_bids
-        ]);
+        'username' => $username,
+        'lot' => $lot,
+        'title' => $title,
+        'my_bids' => $my_bids
+    ]);
 
 // Create a message
     $message = (new Swift_Message('Ваша ставка победила'))
         ->setFrom(['keks@phpdemo.ru'])
         ->setTo([$email])
-        ->setBody($email_template, 'text/html')
-    ;
+        ->setBody($email_template, 'text/html');
 
 // Send the message
     $result = $mailer->send($message);
 }
+
+;
 
 /**
  * Показывает ошибки в зависимости от номера
@@ -418,19 +443,18 @@ function send_email($user) {
  * @param int $error
  * @return array
  */
-function show_error($error) {
+function show_error($error)
+{
     http_response_code($error);
-    if($error === 404) {
-        $page_content = include_template('404.php', [
-            $title = 'Ошибка 404'
-        ]);
-    } else {
-        $page_content = include_template('error.php', [
-            $title = 'Ошибка ' . $error
-        ]);
-    }
+
+    $page_content = include_template('error.php', [
+        'error' => $error
+    ]);
+
     return $page_content;
-};
+}
+
+;
 
 /**
  * Получает количество лотов, соответствующих поисковому запросу
@@ -439,7 +463,8 @@ function show_error($error) {
  * @param string $search Поисковый запрос
  * @return array
  */
-function get_lots_count_by_search($con, $search) {
+function get_lots_count_by_search($con, $search)
+{
 //получаем кол-во лотов, соответствующих поисковому запросу
     $sql = 'SELECT COUNT(*) as cnt FROM lots WHERE MATCH(NAME, description) AGAINST(?)';
     $stmt = db_get_prepare_stmt($con, $sql, [$search]);
@@ -450,6 +475,8 @@ function get_lots_count_by_search($con, $search) {
     return $items_count;
 }
 
+;
+
 /**
  * Получает количество лотов, соответствующих категории
  *
@@ -457,7 +484,8 @@ function get_lots_count_by_search($con, $search) {
  * @param string $category id категории
  * @return array
  */
-function get_lots_count_by_cat($con, $category) {
+function get_lots_count_by_cat($con, $category)
+{
 //получаем кол-во лотов, соответствующих поисковому запросу
     $sql = 'SELECT COUNT(*) as cnt FROM lots WHERE category_id LIKE ?';
     $stmt = db_get_prepare_stmt($con, $sql, [$category]);
@@ -468,6 +496,8 @@ function get_lots_count_by_cat($con, $category) {
     return $items_count;
 }
 
+;
+
 /**
  * Получает количество лотов, соответствующих одной странице пагинации (запрос)
  *
@@ -475,7 +505,8 @@ function get_lots_count_by_cat($con, $category) {
  * @param string $search Поисковый запрос
  * @return array
  */
-function get_lots_for_one_search_page($con, $page_items, $offset, $search) {
+function get_lots_for_one_search_page($con, $page_items, $offset, $search)
+{
     $sql = 'SELECT l.NAME, l.start_price, l.image, l.end_date, l.id, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE MATCH(l.NAME, l.description) AGAINST(?) LIMIT ' . $page_items . ' OFFSET ' . $offset;
     $stmt = db_get_prepare_stmt($con, $sql, [$search]);
     mysqli_stmt_execute($stmt);
@@ -485,6 +516,8 @@ function get_lots_for_one_search_page($con, $page_items, $offset, $search) {
     return $lots;
 }
 
+;
+
 /**
  * Получает количество лотов, соответствующих одной странице пагинации (по категории)
  *
@@ -492,7 +525,8 @@ function get_lots_for_one_search_page($con, $page_items, $offset, $search) {
  * @param string $category Поисковый запрос
  * @return array
  */
-function get_lots_for_one_cat_page($con, $page_items, $offset, $category) {
+function get_lots_for_one_cat_page($con, $page_items, $offset, $category)
+{
     $sql = 'SELECT l.NAME, l.start_price, l.image, l.end_date, l.id, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE l.category_id LIKE ? LIMIT ' . $page_items . ' OFFSET ' . $offset;
     $stmt = db_get_prepare_stmt($con, $sql, [$category]);
     mysqli_stmt_execute($stmt);
@@ -502,6 +536,8 @@ function get_lots_for_one_cat_page($con, $page_items, $offset, $category) {
     return $lots;
 }
 
+;
+
 /**
  * Получает название категории по id
  *
@@ -509,7 +545,8 @@ function get_lots_for_one_cat_page($con, $page_items, $offset, $category) {
  * @param string $id id категории
  * @return mysqli_result
  */
-function get_category_by_id($con, $id) {
+function get_category_by_id($con, $id)
+{
     $sql = 'SELECT name FROM categories WHERE id = ' . $id;
     $stmt = db_get_prepare_stmt($con, $sql);
     mysqli_stmt_execute($stmt);
@@ -519,6 +556,8 @@ function get_category_by_id($con, $id) {
     return $category_name;
 }
 
+;
+
 /**
  * Добавляет новую ставку
  *
@@ -526,14 +565,17 @@ function get_category_by_id($con, $id) {
  * @param array $bid_post Отправленная форма
  * @return mysqli_result
  */
-function insert_new_bid($con, $bid_post) {
+function insert_new_bid($con, $bid_post)
+{
     $sql = 'INSERT INTO bids (date, sum, author_id, lot_id) VALUES (NOW(), ?, ?, ?);';
     $stmt = db_get_prepare_stmt($con, $sql, $bid_post);
     $res = mysqli_stmt_execute($stmt);
 
     return $res;
 
-};
+}
+
+;
 
 /**
  * Обновляет цену лота
@@ -542,13 +584,16 @@ function insert_new_bid($con, $bid_post) {
  * @param string $id id лота
  * @return mysqli_result
  */
-function update_start_price($con, $id) {
+function update_start_price($con, $id)
+{
     $sql = 'UPDATE lots SET start_price = ? WHERE id = ' . $id;
     $stmt = db_get_prepare_stmt($con, $sql, $_POST);
     $res = mysqli_stmt_execute($stmt);
 
     return $res;
 }
+
+;
 
 /**
  * Добавляет новый лот
@@ -557,14 +602,17 @@ function update_start_price($con, $id) {
  * @param array $bid_post Отправленная форма
  * @return mysqli_result
  */
-function insert_new_lot($con, $lot_post) {
+function insert_new_lot($con, $lot_post)
+{
     $sql = 'INSERT INTO lots (start_date, NAME, category_id, description, start_price, bid_step, end_date, author_id, image) VALUES
 (NOW(), ?, ?, ?, ?, ?, ?, ?, ?);';
     $stmt = db_get_prepare_stmt($con, $sql, $lot_post);
     $res = mysqli_stmt_execute($stmt);
 
     return $res;
-};
+}
+
+;
 
 /**
  * Добавляет нового пользователя
@@ -573,11 +621,31 @@ function insert_new_lot($con, $lot_post) {
  * @param array $sign_up Отправленная форма
  * @return mysqli_result
  */
-function insert_new_user($con, $sign_up) {
+function insert_new_user($con, $sign_up)
+{
     $sql = 'INSERT INTO users (register_date, email, password, name, contact_info) VALUES
 (NOW(), ?, ?, ?, ?);';
     $stmt = db_get_prepare_stmt($con, $sql, $sign_up);
     $res = mysqli_stmt_execute($stmt);
 
     return $res;
+}
+
+;
+
+/**
+ * Получает последнюю ставку по указанному лоту
+ *
+ * @param mysqli $con База данных
+ * @param int $lot id лота
+ * @return array
+ */
+function get_last_bid($con, $lot)
+{
+    $lot = mysqli_real_escape_string($con, $lot);
+    $sql = 'SELECT b.DATE, b.SUM, u.id FROM bids b JOIN users u ON b.author_id = u.id WHERE lot_id =' . $lot . ' ORDER BY b.DATE DESC LIMIT 1';
+    $result = mysqli_query($con, $sql);
+    $bids = mysqli_fetch_assoc($result);
+
+    return $bids;
 }

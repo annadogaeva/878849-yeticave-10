@@ -1,4 +1,8 @@
 <?php
+
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+
 require_once('helpers.php');
 require_once('init.php');
 require_once('functions.php');
@@ -97,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'navigation' => $navigation,
-    'title' => 'Добавление лота',
+    'title' => 'Добавить лот',
     'categories' => $categories,
     'user_name' => $user_name,
     'is_auth' => $is_auth

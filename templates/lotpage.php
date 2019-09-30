@@ -18,13 +18,19 @@
             $is_finishing = $remaining_time['hours'] === '00' && !$is_dead;
 
             $timer_class = $is_finishing ? 'timer--finishing' : '';
+
+            if ($_SESSION) {
+                $is_author = $lot_info['author_id'] === $_SESSION['user']['id'];
+                $is_last_bid_mine = $last_bid['id'] === $_SESSION['user']['id'];
+            };
+
             ?>
 
-            <?php if ($is_auth && !$is_dead) : ?>
+            <?php if ($is_auth && !$is_dead && !$is_author && !$is_last_bid_mine) : ?>
                 <div class="lot-item__state">
                     <div
                         class="lot-item__timer timer <?= $timer_class; ?> <?= $dead_timer_class; ?>">
-                            <?= $remaining_time['hours'] . ':' . $remaining_time['minutes'] ; ?>
+                        <?= $remaining_time['hours'] . ':' . $remaining_time['minutes']; ?>
                     </div>
                     <div class="lot-item__cost-state">
                         <div class="lot-item__rate">
@@ -41,9 +47,10 @@
                         <?php $classname = isset($errors['cost']) ? "form__item--invalid" : ""; ?>
                         <p class="lot-item__form-item form__item <?= $classname; ?>">
                             <label for="cost">Ваша ставка</label>
-                            <?php $placeholder = format_price(htmlspecialchars($lot_info['start_price'] + $lot_info['bid_step']), ''); ?>
-                            <input id="cost" type="text" name="cost" placeholder="<?= $placeholder ?>">
-                            <span class="form__error"><?= $errors['cost'] ?></span>
+                            <?php $placeholder = format_price(htmlspecialchars($lot_info['start_price'] + $lot_info['bid_step']),
+                                ''); ?>
+                            <input id="cost" type="text" name="cost" placeholder="<?= $placeholder; ?>">
+                            <span class="form__error"><?= $errors['cost']; ?></span>
                         </p>
                         <button type="submit" class="button">Сделать ставку</button>
                     </form>

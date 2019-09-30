@@ -1,7 +1,7 @@
 <?php
 
-//ini_set('error_reporting', E_ALL);
-//ini_set('display_errors', 1);
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
 
 require_once('helpers.php');
 require_once('init.php');
@@ -10,6 +10,7 @@ require_once('functions.php');
 $categories = get_categories($con);
 $category_info = get_category_info($con);
 $get_category = $_GET['category'] ?? '';
+$category_name = '';
 
 $lots = [];
 
@@ -33,7 +34,7 @@ if ($category_info) {
     ]);
 
 } else {
-        $page_content = show_error(404);
+    $page_content = show_error(404);
 };
 
 $navigation = include_template('navigation.php', [

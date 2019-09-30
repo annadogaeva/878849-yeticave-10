@@ -33,9 +33,9 @@
                             </div>
                             <div class="lot__timer timer <?= $timer_class; ?> <?= $dead_timer_class; ?>">
                                 <?php if ($is_dead): ?>
-                                <?= 'Торги окончены'; ?>
+                                    <?= 'Торги окончены'; ?>
                                 <?php else: ?>
-                                <?= $remaining_time['hours'] . ':' . $remaining_time['minutes'] ; ?>
+                                    <?= $remaining_time['hours'] . ':' . $remaining_time['minutes']; ?>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -47,14 +47,16 @@
     <?php if ($pages_count > 1): ?>
         <ul class="pagination-list">
             <li class="pagination-item pagination-item-prev"><a
-                    <?php if ($cur_page > 1): ?>href="/search.php/?search=<?= htmlspecialchars($search); ?>&find=Найти&page=<?= $cur_page - 1; ?>"<?php endif; ?>>Назад</a>
+                    <?php if ($cur_page > 1): ?>href="search.php?search=<?= htmlspecialchars($search); ?>&find=Найти&page=<?= $cur_page - 1; ?>"<?php endif; ?>>Назад</a>
             </li>
             <?php foreach ($pages as $page): ?>
-                <li class="pagination-item <?php if ($page === $cur_page): ?>pagination-item-active<?php endif; ?>"><a
-                        href="/search.php/?search=<?= htmlspecialchars($search); ?>&find=Найти&page=<?= $page; ?>"><?= $page; ?></a></li>
+                <li class="pagination-item <?php if ((int)$page === (int)$cur_page): ?>pagination-item-active<?php endif; ?>">
+                    <a
+                        href="search.php?search=<?= htmlspecialchars($search); ?>&find=Найти&page=<?= $page; ?>"><?= $page; ?></a>
+                </li>
             <?php endforeach; ?>
             <li class="pagination-item pagination-item-next"><a
-                    <?php if ($cur_page < count($pages)): ?>href="/search.php/?search=<?= htmlspecialchars($search); ?>&find=Найти&page=<?= $cur_page + 1; ?>"<?php endif; ?>>Вперед</a>
+                    <?php if ($cur_page < count($pages)): ?>href="search.php?search=<?= htmlspecialchars($search); ?>&find=Найти&page=<?= $cur_page + 1; ?>"<?php endif; ?>>Вперед</a>
             </li>
         </ul>
     <?php endif; ?>

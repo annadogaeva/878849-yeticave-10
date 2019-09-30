@@ -1,5 +1,8 @@
 <?php
 
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+
 require_once('helpers.php');
 require_once('init.php');
 require_once('functions.php');
@@ -11,9 +14,14 @@ $navigation = include_template('navigation.php', [
     'categories' => $categories
 ]);
 
-$page_content = include_template('mybids.php', [
-    'my_bids' => $my_bids
-]);
+//если пользователь авторизован, то показать ставки
+if ($is_auth) {
+    $page_content = include_template('mybids.php', [
+        'my_bids' => $my_bids
+    ]);
+} else { //если не авторизован, покаать ошибку
+    $page_content = show_error(403);
+};
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
