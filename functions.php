@@ -507,7 +507,7 @@ function get_lots_count_by_cat($con, $category)
  */
 function get_lots_for_one_search_page($con, $page_items, $offset, $search)
 {
-    $sql = 'SELECT l.NAME, l.start_price, l.image, l.end_date, l.id, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE MATCH(l.NAME, l.description) AGAINST(?) LIMIT ' . $page_items . ' OFFSET ' . $offset;
+    $sql = 'SELECT l.NAME, l.start_price, l.image, l.end_date, l.id, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE MATCH(l.NAME, l.description) AGAINST(?)  ORDER BY l.start_date DESC LIMIT ' . $page_items . ' OFFSET ' . $offset;
     $stmt = db_get_prepare_stmt($con, $sql, [$search]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -527,7 +527,7 @@ function get_lots_for_one_search_page($con, $page_items, $offset, $search)
  */
 function get_lots_for_one_cat_page($con, $page_items, $offset, $category)
 {
-    $sql = 'SELECT l.NAME, l.start_price, l.image, l.end_date, l.id, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE l.category_id LIKE ? LIMIT ' . $page_items . ' OFFSET ' . $offset;
+    $sql = 'SELECT l.NAME, l.start_price, l.image, l.start_date, l.end_date, l.id, c.name FROM lots l JOIN categories c ON l.category_id = c.id WHERE l.category_id LIKE ? ORDER BY l.start_date DESC LIMIT ' . $page_items . ' OFFSET ' . $offset;
     $stmt = db_get_prepare_stmt($con, $sql, [$category]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
