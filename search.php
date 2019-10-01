@@ -9,10 +9,17 @@ require_once('functions.php');
 
 $categories = get_categories($con);
 
+$navigation = include_template('navigation.php', [
+    'categories' => $categories
+]);
+
 $lots = [];
 $search = $_GET['search'] ?? '';
 $search = trim($search);
 
+$pages = [];
+$pages_count = 0;
+$cur_page = 0;
 
 if ($search) {
     $cur_page = $_GET['page'] ?? 1; //текущая страница
@@ -22,28 +29,29 @@ if ($search) {
     $offset = ($cur_page - 1) * $page_items; //смещение
     $pages = range(1, $pages_count); //массив с номерами страниц
     $lots = get_lots_for_one_search_page($con, $page_items, $offset, $search); //лоты для 1 страницы пагинации
-}
 
-$navigation = include_template('navigation.php', [
-    'categories' => $categories
-]);
+    $page_content = include_template('searchpage.php', [
+        'lots' => $lots,
+        'search' => $search,
+        'pages' => $pages,
+        'pages_count' => $pages_count,
+        'cur_page' => $cur_page
+    ]);
 
-$page_content = include_template('searchpage.php', [
-    'lots' => $lots,
-    'search' => $search,
-    'pages' => $pages,
-    'pages_count' => $pages_count,
-    'cur_page' => $cur_page
-]);
+    $layout_content = include_template('layout.php', [
+        'content' => $page_content,
+        'navigation' => $navigation,
+        'title' => 'Поиск',
+        'categories' => $categories,
+        'user_name' => $user_name,
+        'is_auth' => $is_auth,
+        'search' => $search
+    ]);
 
-$layout_content = include_template('layout.php', [
-    'content' => $page_content,
-    'navigation' => $navigation,
-    'title' => 'Поиск',
-    'categories' => $categories,
-    'user_name' => $user_name,
-    'is_auth' => $is_auth,
-    'search' => $search
-]);
+    print($layout_content);
+} else {
+    header("Location: " . $_SERVER["HTTP_REFERER"]);
+};
 
-print($layout_content);
+
+
