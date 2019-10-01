@@ -171,7 +171,7 @@ function validate_price($name)
 function validate_bid_step($name)
 {
     $bid = $_POST[$name];
-    if ($bid <= 0 || filter_var($name, FILTER_VALIDATE_INT) === true) {
+    if ($bid <= 0 || !is_numeric($bid) || $bid != round($bid)) {
         return "Содержимое поля «шаг ставки» должно быть целым числом больше ноля";
     }
 
@@ -266,7 +266,7 @@ function validate_email($name, $list)
 function validate_bid($name, $startprice, $minbid)
 {
     $bid = $_POST[$name];
-    if ($bid <= 0 || filter_var($name, FILTER_VALIDATE_INT) === true) {
+    if ($bid <= 0 || !is_numeric($bid) || $bid != round($bid)) {
         return 'Ставка должна быть целым числом больше ноля';
     } elseif ($bid < ($startprice + $minbid)) {
         return 'Ставка должна быть больше стартовой цены на сумму минимальной ставки';

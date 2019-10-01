@@ -10,14 +10,19 @@
                    value="<?= getPostVal('name'); ?>">
             <span class="form__error"><?= $errors['name']; ?></span>
         </div>
-        <?php $classname = isset($errors['category_id']) ? "form__item--invalid" : ""; ?>
+        <?php $classname = isset($errors['category_id']) ? 'form__item--invalid' : ''; ?>
         <div class="form__item <?= $classname; ?>">
             <label for="category">Категория <sup>*</sup></label>
             <select id="category" name="category_id">
                 <option>Выберите категорию</option>
                 <?php foreach ($categories as $category): ?>
-                    <option value="<?= htmlspecialchars($category['id']); ?>"
-                            <?php if ($_POST['category_id'] === $category['id']) : ?>selected<?php endif; ?>><?= htmlspecialchars($category['name']); ?></option>
+                    <?php
+                        $id = isset($category['id']) ? htmlspecialchars($category['id']) : '';
+                        $name = isset($category['name']) ? htmlspecialchars($category['name']) : '';
+                        $post_id = isset($_POST['category_id']) ? htmlspecialchars($_POST['category_id']) : '';
+                    ?>
+                    <option value="<?= $id; ?>"
+                            <?php if ($post_id === $id) : ?>selected<?php endif; ?>><?= $name; ?></option>
                 <?php endforeach ?>
             </select>
             <span class="form__error"><?= $errors['category_id']; ?></span>

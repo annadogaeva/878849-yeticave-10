@@ -17,7 +17,7 @@ $page_content = include_template('main.php', [
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'title' => 'Главная',
+    'title' => 'Интернет-аукцион Yeticave',
     'categories' => $categories,
     'user_name' => $user_name,
     'is_auth' => $is_auth
