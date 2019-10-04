@@ -22,61 +22,64 @@ if (!$is_auth) {
 };
 
 //если форма отправлена, то...
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $sign_up = $_POST;
+if(isset($_SERVER['REQUEST_METHOD'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $sign_up = $_POST;
 
-    //валидация формы
-    $required = ['email', 'password', 'name', 'message'];
-    $errors = [];
+        //валидация формы
+        $required = ['email', 'password', 'name', 'message'];
+        $errors = [];
 
-    $rules = [
-        'email' => function () use ($emails) {
-            return validate_email('email', $emails);
-        }
-    ];
+        $rules = [
+            'email' => function () use ($emails) {
+                return validate_email('email', $emails);
+            }
+        ];
 
-    foreach ($_POST as $key => $value) {
-        if (isset($rules[$key])) {
-            $rule = $rules[$key];
-            $errors[$key] = $rule();
-        };
-    };
-
-    $errors = array_filter($errors);
-
-    foreach ($required as $key) {
-        if (empty($_POST[$key])) {
-            if ($key === 'name') {
-                $errors[$key] = 'Введите имя';
-            } elseif ($key === 'email') {
-                $errors[$key] = 'Введите e-mail';
-            } elseif ($key === 'password') {
-                $errors[$key] = 'Введите пароль';
-            } elseif ($key === 'message') {
-                $errors[$key] = 'Напишите как с вами связаться';
-            } else {
-                $errors[$key] = 'Заполните это поле';
+        foreach ($_POST as $key => $value) {
+            if (isset($rules[$key])) {
+                $rule = $rules[$key];
+                $errors[$key] = $rule();
             };
         };
-    };
 
-    //если есть ошибки, показать ошибки
-    if (count($errors)) {
-        $page_content = include_template('registration.php',
-            [
-                'sign_up' => $sign_up,
-                'errors' => $errors
-            ]);
-    } else { //если нет ошибок, зарегистрировать пользователя
-        $sign_up['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        $registered = insert_new_user($con, $sign_up);
+        $errors = array_filter($errors);
 
-        //если пользователен зарегистрирован, перенаправить на страницу логина
-        if ($registered) {
-            header("Location: login.php");
+        foreach ($required as $key) {
+            if (empty($_POST[$key])) {
+                if ($key === 'name') {
+                    $errors[$key] = 'Введите имя';
+                } elseif ($key === 'email') {
+                    $errors[$key] = 'Введите e-mail';
+                } elseif ($key === 'password') {
+                    $errors[$key] = 'Введите пароль';
+                } elseif ($key === 'message') {
+                    $errors[$key] = 'Напишите как с вами связаться';
+                } else {
+                    $errors[$key] = 'Заполните это поле';
+                };
+            };
         };
-    };
-}
+
+        //если есть ошибки, показать ошибки
+        if (count($errors)) {
+            $page_content = include_template('registration.php',
+                [
+                    'sign_up' => $sign_up,
+                    'errors' => $errors
+                ]);
+        } elseif(isset($_POST['password'])) { //если нет ошибок, зарегистрировать пользователя
+            $sign_up['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $registered = insert_new_user($con, $sign_up);
+
+            //если пользователен зарегистрирован, перенаправить на страницу логина
+            if ($registered) {
+                header("Location: login.php");
+            };
+        };
+    }
+};
+
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,

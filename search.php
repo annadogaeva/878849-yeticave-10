@@ -14,15 +14,14 @@ $navigation = include_template('navigation.php', [
 ]);
 
 $lots = [];
-$search = $_GET['search'] ?? '';
-$search = trim($search);
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 $pages = [];
 $pages_count = 0;
-$cur_page = 0;
+$cur_page = 1;
 
 if ($search) {
-    $cur_page = $_GET['page'] ?? 1; //текущая страница
+    $cur_page = isset($_GET['page']) ? $_GET['page'] : 1; //текущая страница
     $page_items = 9; //кол-во элементов на странице
     $items_count = get_lots_count_by_search($con, $search); //кол-во лотов, соотв запросу
     $pages_count = ceil($items_count / $page_items); //кол-во страниц пагинации
@@ -49,7 +48,8 @@ if ($search) {
     ]);
 
     print($layout_content);
-} else {
+
+} elseif(isset($_SERVER["HTTP_REFERER"])) {
     header("Location: " . $_SERVER["HTTP_REFERER"]);
 };
 

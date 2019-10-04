@@ -9,13 +9,15 @@ require_once('functions.php');
 
 $categories = get_categories($con);
 $category_info = get_category_info($con);
-$get_category = $_GET['category'] ?? '';
+$get_category = isset($_GET['category']) ? $_GET['category'] : '';
+
 $category_name = '';
+$page_content = '';
 
 $lots = [];
 
 if ($category_info) {
-    $cur_page = $_GET['page'] ?? 1; //текущая страница
+    $cur_page = isset($_GET['page']) ? $_GET['page'] : 1; //текущая страница
     $page_items = 9; //кол-во элементов на странице
     $category_name = get_category_by_id($con, $get_category); //получаем имя категории по id
     $items_count = get_lots_count_by_cat($con, $get_category); //кол-во лотов, соотв категории

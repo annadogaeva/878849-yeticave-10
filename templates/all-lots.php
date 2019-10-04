@@ -6,10 +6,10 @@
             <?php foreach ($lots as $lot): ?>
 
                 <?php
-                $remaining_time = calculate_remaining_time($lot['end_date']);
+                $remaining_time = isset($lot['end_date']) ? calculate_remaining_time($lot['end_date']) : '';
 
-                $is_dead = $remaining_time['status'] === 'end';
-                $is_finishing = $remaining_time['hours'] === '00' && !$is_dead;
+                $is_dead = isset($remaining_time['status']) ? ($remaining_time['status'] === 'end') : '';
+                $is_finishing = isset($remaining_time['hours']) ? ($remaining_time['hours'] === '00' && !$is_dead) : '';
 
                 $timer_class = $is_finishing ? 'timer--finishing' : '';
                 $dead_timer_class = $is_dead ? 'timer--end' : '';
@@ -17,25 +17,25 @@
 
                 <li class="lots__item lot">
                     <div class="lot__image">
-                        <img src="/<?= htmlspecialchars($lot['image']); ?>" width="350" height="260"
-                             alt="<?= htmlspecialchars($lot['name']); ?>">
+                        <img src="/<?= isset($lot['image']) ? htmlspecialchars($lot['image']) : ''; ?>" width="350" height="260"
+                             alt="<?= isset($lot['name']) ? htmlspecialchars($lot['name']) : ''; ?>">
                     </div>
                     <div class="lot__info">
-                        <span class="lot__category"><?= htmlspecialchars($lot['name']); ?></span>
+                        <span class="lot__category"><?= isset($lot['name']) ? htmlspecialchars($lot['name']) : ''; ?></span>
                         <h3 class="lot__title"><a class="text-link"
-                                                  href="/lot.php?lot=<?= $lot['id']; ?>"><?= htmlspecialchars($lot['NAME']); ?></a>
+                                                  href="/lot.php?lot=<?= isset($lot['id']) ? $lot['id'] : ''; ?>"><?= isset($lot['NAME']) ? htmlspecialchars($lot['NAME']) : ''; ?></a>
                         </h3>
                         <div class="lot__state">
                             <div class="lot__rate">
                                 <span class="lot__amount">Стартовая цена</span>
                                 <span
-                                    class="lot__cost"><?= format_price(htmlspecialchars($lot['start_price'])); ?></span>
+                                    class="lot__cost"><?= isset($lot['start_price']) ? format_price(htmlspecialchars($lot['start_price'])) : ''; ?></span>
                             </div>
                             <div class="lot__timer timer <?= $timer_class; ?> <?= $dead_timer_class; ?>">
                                 <?php if ($is_dead): ?>
                                     <?= 'Торги окончены'; ?>
                                 <?php else: ?>
-                                    <?= $remaining_time['hours'] . ':' . $remaining_time['minutes']; ?>
+                                    <?= (isset($remaining_time['hours']) ? $remaining_time['hours'] : '') . ':' . (isset($remaining_time['minutes']) ? $remaining_time['minutes'] : ''); ?>
                                 <?php endif; ?>
                             </div>
                         </div>
