@@ -22,12 +22,13 @@
                 <tr class="rates__item <?= $win_item_class; ?> <?= $dead_item_class; ?>">
                     <td class="rates__info">
                         <div class="rates__img">
-                            <img src="/<?= isset($bid['image']) ? htmlspecialchars($bid['image']) : ''; ?>" width="54" height="40"
+                            <img src="/<?= isset($bid['image']) ? htmlspecialchars($bid['image']) : ''; ?>" width="54"
+                                 height="40"
                                  alt="<?= isset($bid['name']) ? htmlspecialchars($bid['name']) : ''; ?>">
                         </div>
                         <div>
                             <h3 class="rates__title"><a
-                                    href="/lot.php?lot=<?= isset($bid['id']) ? $bid['id'] : ''; ?>"><?= isset($bid['name']) ? htmlspecialchars($bid['name']) : ''; ?></a>
+                                        href="/lot.php?lot=<?= isset($bid['id']) ? $bid['id'] : ''; ?>"><?= isset($bid['name']) ? htmlspecialchars($bid['name']) : ''; ?></a>
                             </h3>
                             <?php if ($is_winner): ?>
                                 <p><?= isset($bid['lot_author_contact']) ? htmlspecialchars($bid['lot_author_contact']) : ''; ?></p>

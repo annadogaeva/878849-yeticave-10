@@ -25,7 +25,7 @@ if ($is_auth) {
 };
 
 //если форма отправлена, то...
-if(isset($_SERVER['REQUEST_METHOD'])){
+if (isset($_SERVER['REQUEST_METHOD'])) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $lot_post = $_POST;
         $lot_post['author_id'] = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : '';
@@ -73,7 +73,6 @@ if(isset($_SERVER['REQUEST_METHOD'])){
 
             if (($file_type !== 'image/jpeg') && ($file_type !== 'image/png')) {
                 $errors['file'] = 'Загрузите картинку в формате JPG или PNG';
-
             } else {
                 move_uploaded_file($tmp_name, 'uploads/' . $filename);
                 $lot_post['image'] = 'uploads/' . $filename;
@@ -98,7 +97,7 @@ if(isset($_SERVER['REQUEST_METHOD'])){
             };
         };
     };
-}
+};
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,

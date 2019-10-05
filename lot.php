@@ -37,7 +37,7 @@ if ($lot_info) {
 };
 
 //если отправлена форма ставки, то...
-if(isset($_SERVER['REQUEST_METHOD'])) {
+if (isset($_SERVER['REQUEST_METHOD'])) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST' and $is_auth) {
         $bid_post = $_POST;
         $errors = [];
@@ -46,7 +46,8 @@ if(isset($_SERVER['REQUEST_METHOD'])) {
         $bid_post['lot_id'] = isset($lot_info['id']) ? $lot_info['id'] : '';
 
         //валидация ошибок
-        $errors['cost'] = isset($lot_info['start_price']) && isset($lot_info['bid_step']) ? validate_bid('cost', $lot_info['start_price'], $lot_info['bid_step']) : '';
+        $errors['cost'] = isset($lot_info['start_price']) && isset($lot_info['bid_step']) ? validate_bid('cost',
+            $lot_info['start_price'], $lot_info['bid_step']) : '';
         if (empty($_POST['cost'])) {
             $errors['cost'] = 'Введите сумму';
         };

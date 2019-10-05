@@ -49,7 +49,7 @@ if ($search) {
 
     print($layout_content);
 
-} elseif(isset($_SERVER["HTTP_REFERER"])) {
+} elseif (isset($_SERVER["HTTP_REFERER"])) {
     header("Location: " . $_SERVER["HTTP_REFERER"]);
 };
 

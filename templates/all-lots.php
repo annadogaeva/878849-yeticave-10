@@ -17,7 +17,8 @@
 
                 <li class="lots__item lot">
                     <div class="lot__image">
-                        <img src="/<?= isset($lot['image']) ? htmlspecialchars($lot['image']) : ''; ?>" width="350" height="260"
+                        <img src="/<?= isset($lot['image']) ? htmlspecialchars($lot['image']) : ''; ?>" width="350"
+                             height="260"
                              alt="<?= isset($lot['name']) ? htmlspecialchars($lot['name']) : ''; ?>">
                     </div>
                     <div class="lot__info">
@@ -29,7 +30,7 @@
                             <div class="lot__rate">
                                 <span class="lot__amount">Стартовая цена</span>
                                 <span
-                                    class="lot__cost"><?= isset($lot['start_price']) ? format_price(htmlspecialchars($lot['start_price'])) : ''; ?></span>
+                                        class="lot__cost"><?= isset($lot['start_price']) ? format_price(htmlspecialchars($lot['start_price'])) : ''; ?></span>
                             </div>
                             <div class="lot__timer timer <?= $timer_class; ?> <?= $dead_timer_class; ?>">
                                 <?php if ($is_dead): ?>
@@ -52,7 +53,8 @@
             <?php foreach ($pages as $page): ?>
                 <li class="pagination-item <?php if ((int)$page === (int)$cur_page): ?>pagination-item-active<?php endif; ?>">
                     <a
-                        href="categories.php?category=<?= $get_category; ?>&page=<?= $page; ?>"><?= $page; ?></a></li>
+                            href="categories.php?category=<?= $get_category; ?>&page=<?= $page; ?>"><?= $page; ?></a>
+                </li>
             <?php endforeach; ?>
             <li class="pagination-item pagination-item-next"><a
                     <?php if ($cur_page < count($pages)): ?>href="categories.php?category=<?= $get_category; ?>&page=<?= $cur_page + 1; ?>"<?php endif; ?>>Вперед</a>

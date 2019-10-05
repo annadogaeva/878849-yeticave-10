@@ -105,7 +105,7 @@ function get_categories($con)
  */
 function get_lot_info($con)
 {
-    if (!empty($_GET['lot'])) {
+    if (isset($_GET['lot'])) {
         $lot_id = mysqli_real_escape_string($con, $_GET['lot']);
         $sql = 'SELECT l.id, l.NAME, l.start_price, l.image, l.end_date, l.bid_step, l.description, l.author_id, c.name 
                 FROM lots l 
@@ -121,9 +121,15 @@ function get_lot_info($con)
 
 ;
 
+/**
+ * Возвращает массив с информацией о текущей категории, ссгласно GET запросу
+ *
+ * @param mysqli $con База данных
+ * @return array
+ */
 function get_category_info($con)
 {
-    if (!empty($_GET['category'])) {
+    if (isset($_GET['category'])) {
         $category_id = mysqli_real_escape_string($con, $_GET['category']);
         $sql = 'SELECT id, name 
                 FROM categories 
@@ -298,11 +304,11 @@ function validate_bid($name, $startprice, $minbid)
 function get_bid_info($con, $lot)
 {
     $lot = mysqli_real_escape_string($con, $lot);
-    $sql = 'SELECT b.id, b.DATE, b.SUM, u.name 
+    $sql = "SELECT b.id, b.DATE, b.SUM, u.name 
             FROM bids b 
             JOIN users u ON b.author_id = u.id 
-            WHERE lot_id =' . $lot . ' 
-            ORDER BY b.DATE DESC';
+            WHERE `lot_id` ='" . $lot . "' 
+            ORDER BY b.DATE DESC";
     $result = mysqli_query($con, $sql);
     $bids = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
@@ -366,13 +372,13 @@ function get_my_bids($con)
 {
     if ($_SESSION) {
         $user = isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : '';
-        $sql = 'SELECT l.image, l.name, c.NAME, l.end_date, b.SUM, b.DATE, b.author_id, l.id, l.start_price, l.author_id AS lot_author, u.contact_info AS lot_author_contact,l.winner_id 
+        $sql = "SELECT l.image, l.name, c.NAME, l.end_date, b.SUM, b.DATE, b.author_id, l.id, l.start_price, l.author_id AS lot_author, u.contact_info AS lot_author_contact,l.winner_id 
                 FROM bids b 
                 JOIN lots l ON b.lot_id = l.id 
                 JOIN categories c ON l.category_id = c.id 
                 JOIN users u ON l.author_id = u.id 
-                WHERE b.author_id = ' . $user . '  
-                ORDER BY b.DATE DESC';
+                WHERE b.`author_id` = '" . $user . "'  
+                ORDER BY b.DATE DESC";
         $result = mysqli_query($con, $sql);
         $my_bids = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
@@ -412,12 +418,12 @@ function get_lots_to_close($con)
 function get_lot_winner($con, $lot)
 {
     $lot = mysqli_real_escape_string($con, $lot);
-    $sql = 'SELECT b.author_id, u.email, u.name AS username, l.name, b.lot_id 
+    $sql = "SELECT b.author_id, u.email, u.name AS username, l.name, b.lot_id 
             FROM bids b 
             JOIN users u ON b.author_id = u.id 
             JOIN lots l ON b.lot_id = l.id 
-            WHERE b.lot_id = ' . $lot . '  
-            ORDER BY b.date DESC LIMIT 1';
+            WHERE b.`lot_id` = '" . $lot . "'  
+            ORDER BY b.date DESC LIMIT 1";
     $result = mysqli_query($con, $sql);
     $winner = mysqli_fetch_assoc($result);
 
@@ -695,13 +701,15 @@ function insert_new_user($con, $sign_up)
 function get_last_bid($con, $lot)
 {
     $lot = mysqli_real_escape_string($con, $lot);
-    $sql = 'SELECT b.DATE, b.SUM, u.id 
+    $sql = "SELECT b.DATE, b.SUM, u.id 
             FROM bids b 
             JOIN users u ON b.author_id = u.id 
-            WHERE lot_id =' . $lot . ' 
-            ORDER BY b.DATE DESC LIMIT 1';
+            WHERE `lot_id` ='" . $lot . "' 
+            ORDER BY b.DATE DESC LIMIT 1";
     $result = mysqli_query($con, $sql);
     $bids = mysqli_fetch_assoc($result);
 
     return $bids;
 }
+
+;

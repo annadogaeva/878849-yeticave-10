@@ -22,7 +22,7 @@ if (!$is_auth) {
 };
 
 //если форма отправлена, то...
-if(isset($_SERVER['REQUEST_METHOD'])) {
+if (isset($_SERVER['REQUEST_METHOD'])) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sign_up = $_POST;
 
@@ -68,7 +68,7 @@ if(isset($_SERVER['REQUEST_METHOD'])) {
                     'sign_up' => $sign_up,
                     'errors' => $errors
                 ]);
-        } elseif(isset($_POST['password'])) { //если нет ошибок, зарегистрировать пользователя
+        } elseif (isset($_POST['password'])) { //если нет ошибок, зарегистрировать пользователя
             $sign_up['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
             $registered = insert_new_user($con, $sign_up);
 

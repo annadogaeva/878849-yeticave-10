@@ -20,7 +20,7 @@ if (!$is_auth) {
 };
 
 //если форма отправлена, то...
-if(isset($_SERVER['REQUEST_METHOD'])) {
+if (isset($_SERVER['REQUEST_METHOD'])) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $login = $_POST;
 
@@ -48,7 +48,7 @@ if(isset($_SERVER['REQUEST_METHOD'])) {
         $user = $res ? mysqli_fetch_array($res, MYSQLI_ASSOC) : null;
 
         if (!count($errors) and $user) {
-            if(isset($login['password']) and isset($user['password'])) {
+            if (isset($login['password']) and isset($user['password'])) {
                 if (password_verify($login['password'], $user['password'])) {
                     $_SESSION['user'] = $user;
                 } else {

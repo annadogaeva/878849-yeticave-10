@@ -17,7 +17,8 @@
 
                 <li class="lots__item lot">
                     <div class="lot__image">
-                        <img src="/<?= isset($lot['image']) ? htmlspecialchars($lot['image']) : ''; ?>" width="350" height="260"
+                        <img src="/<?= isset($lot['image']) ? htmlspecialchars($lot['image']) : ''; ?>" width="350"
+                             height="260"
                              alt="<?= isset($lot['name']) ? htmlspecialchars($lot['name']) : ''; ?>">
                     </div>
                     <div class="lot__info">
@@ -29,13 +30,13 @@
                             <div class="lot__rate">
                                 <span class="lot__amount">Стартовая цена</span>
                                 <span
-                                    class="lot__cost"><?= isset($lot['start_price']) ? format_price(htmlspecialchars($lot['start_price'])) : ''; ?></span>
+                                        class="lot__cost"><?= isset($lot['start_price']) ? format_price(htmlspecialchars($lot['start_price'])) : ''; ?></span>
                             </div>
                             <div class="lot__timer timer <?= $timer_class; ?> <?= $dead_timer_class; ?>">
                                 <?php if ($is_dead): ?>
                                     <?= 'Торги окончены'; ?>
                                 <?php else: ?>
-                                    <?= (isset($remaining_time['hours']) ? $remaining_time['hours'] : '') . ':' . (isset($remaining_time['minutes']) ? $remaining_time['minutes']: ''); ?>
+                                    <?= (isset($remaining_time['hours']) ? $remaining_time['hours'] : '') . ':' . (isset($remaining_time['minutes']) ? $remaining_time['minutes'] : ''); ?>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -52,7 +53,7 @@
             <?php foreach ($pages as $page): ?>
                 <li class="pagination-item <?php if ((int)$page === (int)$cur_page): ?>pagination-item-active<?php endif; ?>">
                     <a
-                        href="search.php?search=<?= htmlspecialchars($search); ?>&find=Найти&page=<?= $page; ?>"><?= $page; ?></a>
+                            href="search.php?search=<?= htmlspecialchars($search); ?>&find=Найти&page=<?= $page; ?>"><?= $page; ?></a>
                 </li>
             <?php endforeach; ?>
             <li class="pagination-item pagination-item-next"><a

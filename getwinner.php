@@ -11,10 +11,10 @@ if ($lots_to_close) {
     foreach ($lots_to_close as $lot) {
         $winner_info = '';
         $lot_id = '';
-        if(isset($lot['id'])) {
+        if (isset($lot['id'])) {
             $winner_info = get_lot_winner($con, $lot['id']);
             $lot_id = mysqli_real_escape_string($con, $lot['id']); //защищен
-            if(isset($winner_info['author_id'])) {
+            if (isset($winner_info['author_id'])) {
                 $sql = 'UPDATE lots SET winner_id = ' . $winner_info['author_id'] . ' WHERE id = ' . $lot['id'];
                 $result = mysqli_query($con, $sql);
                 if ($result) {
